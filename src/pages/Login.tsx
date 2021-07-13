@@ -1,6 +1,6 @@
 
 import styled from "styled-components"
-import RegisterForm from "../components/Auth/RegisterForm"
+
 import { EmptyLayout } from "../layouts/EmptyLayout"
 
 export const Login = () => {
@@ -9,6 +9,6 @@ export const Login = () => {
   // api.login({ username: "abc", password: "def" })
 
   return <EmptyLayout>
-    <RegisterForm></RegisterForm>
+    <p>Login</p>
   </EmptyLayout>
 }

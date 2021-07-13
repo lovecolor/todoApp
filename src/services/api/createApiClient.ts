@@ -17,9 +17,7 @@ export const createApiClient = (args: CreateApiClientArgs): AxiosInstance => {
   });
   api.interceptors.response.use(
     (response) => {
-      if (response && response.data) {
-        return response;
-      }
+
       return response;
     },
     function (error) {
