@@ -5,4 +5,6 @@ export const EmptyLayout = (props) => {
   return <Layout>{props.children}</Layout>
 }
 
-const Layout = styled.div``
+const Layout = styled.div`
+
+`
