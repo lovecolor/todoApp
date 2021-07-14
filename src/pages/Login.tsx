@@ -14,12 +14,10 @@ import { makeStyles } from "@material-ui/core/styles"
 import Container from "@material-ui/core/Container"
 import { EmptyLayout } from "../layouts/EmptyLayout"
 import AuthContext from "../contexts/AuthProvider"
-import { Error, Loading, CustomAvatar, CustomPaper, CustomForm ,CustomButton} from "./Register"
+import { Error, Loading, CustomAvatar, CustomPaper, CustomForm, CustomButton } from "./Register"
 import { TextFieldOutlined } from "../components/textfields/TextFieldOutlined"
 import { ButtonPrimary } from "../components/buttons/ButtonPrimary"
 import styled from "styled-components"
-
-
 
 export const Login = () => {
   // to call API
@@ -78,7 +76,7 @@ export const Login = () => {
             {!authCtx.loading && (
               <CustomButton type="submit" fullWidth>
                 Sign In
-              </CustomButton> 
+              </CustomButton>
             )}
 
             <Grid container>
@@ -95,11 +93,10 @@ export const Login = () => {
             </Grid>
           </CustomForm>
         </CustomPaper>
-        
       </Container>
     </EmptyLayout>
   )
 }
 const CustomTextField = styled(TextFieldOutlined)`
-margin:.5rem 0;
+  margin: 0.5rem 0;
 `
