@@ -14,22 +14,12 @@ import { makeStyles } from "@material-ui/core/styles"
 import Container from "@material-ui/core/Container"
 import { EmptyLayout } from "../layouts/EmptyLayout"
 import AuthContext from "../contexts/AuthProvider"
-import { Error, Loading, CustomAvatar, CustomPaper, CustomForm } from "./Register"
+import { Error, Loading, CustomAvatar, CustomPaper, CustomForm ,CustomButton} from "./Register"
 import { TextFieldOutlined } from "../components/textfields/TextFieldOutlined"
 import { ButtonPrimary } from "../components/buttons/ButtonPrimary"
+import styled from "styled-components"
 
-function Copyright() {
-  return (
-    <Typography variant="body2" color="textSecondary" align="center">
-      {"Copyright © "}
-      <Link color="inherit" href="https://material-ui.com/">
-        Your Website
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
-  )
-}
+
 
 export const Login = () => {
   // to call API
@@ -63,34 +53,32 @@ export const Login = () => {
           <Typography component="h5" variant="h5">
             Sign in
           </Typography>
-          <CustomForm onSubmit={submitHandler}  >
-            <TextFieldOutlined
+          <CustomForm onSubmit={submitHandler}>
+            <CustomTextField
               margin="normal"
               required
               fullWidth
-              id="email"
               label="Email Address"
               name="email"
               autoComplete="email"
               autoFocus
             />
-            <TextFieldOutlined
+            <CustomTextField
               margin="normal"
               required
               fullWidth
               name="password"
               label="Password"
               type="password"
-              id="password"
               autoComplete="current-password"
             />
             <FormControlLabel control={<Checkbox value="remember" color="primary" />} label="Remember me" />
             {authCtx.error && <Error>{authCtx.error}</Error>}
             {authCtx.loading && <Loading>Loading...</Loading>}
             {!authCtx.loading && (
-              <ButtonPrimary type="submit" fullWidth>
+              <CustomButton type="submit" fullWidth>
                 Sign In
-              </ButtonPrimary>
+              </CustomButton> 
             )}
 
             <Grid container>
@@ -107,10 +95,11 @@ export const Login = () => {
             </Grid>
           </CustomForm>
         </CustomPaper>
-        <Box mt={8}>
-          <Copyright />
-        </Box>
+        
       </Container>
     </EmptyLayout>
   )
 }
+const CustomTextField = styled(TextFieldOutlined)`
+margin:.5rem 0;
+`

@@ -18,21 +18,6 @@ import { ButtonPrimary } from "../components/buttons/ButtonPrimary"
 import { TextFieldOutlined } from "../components/textfields/TextFieldOutlined"
 import { Paper } from "@material-ui/core"
 
-function Copyright() {
-  return (
-    <Typography variant="body2" color="textSecondary" align="center">
-      {"Copyright © "}
-      <Link color="inherit" href="/">
-        Your Website
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
-  )
-}
-
-
-
 export default function Register() {
   const authCtx = useContext(AuthContext)
   const submitHandler = (e) => {
@@ -53,7 +38,6 @@ export default function Register() {
     })
   }
 
-  
   return (
     <EmptyLayout>
       <Container component="main" maxWidth="xs">
@@ -64,7 +48,7 @@ export default function Register() {
           <Typography component="h5" variant="h5">
             Sign up
           </Typography>
-          <CustomForm onSubmit={submitHandler} >
+          <CustomForm onSubmit={submitHandler}>
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
                 <TextFieldOutlined autoComplete="name" name="name" required fullWidth label="Name" autoFocus />
@@ -89,9 +73,9 @@ export default function Register() {
             {authCtx.error && <Error>{authCtx.error}</Error>}
             {authCtx.loading && <Loading>Loading...</Loading>}
             {!authCtx.loading && (
-              <ButtonPrimary type="submit" fullWidth >
+              <CustomButton type="submit" fullWidth>
                 Sign Up
-              </ButtonPrimary>
+              </CustomButton>
             )}
 
             <Grid container justifyContent="flex-end">
@@ -103,13 +87,13 @@ export default function Register() {
             </Grid>
           </CustomForm>
         </CustomPaper>
-        <Box mt={5}>
-          <Copyright />
-        </Box>
       </Container>
     </EmptyLayout>
   )
 }
+export const CustomButton = styled(ButtonPrimary)`
+  margin: 1rem 0;
+`
 export const CustomPaper = styled(Paper)`
   padding: 1rem;
   display: flex;
@@ -122,7 +106,7 @@ export const CustomAvatar = styled(Avatar)`
   background-color: #f50057;
 `
 export const CustomForm = styled.form`
-   width: "100%";
+  width: "100%";
   margin-top: 1rem;
 `
 export const Error = styled.p`
