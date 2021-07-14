@@ -10,11 +10,13 @@ import Typography from "@material-ui/core/Typography"
 import { makeStyles } from "@material-ui/core/styles"
 import Container from "@material-ui/core/Container"
 import React, { useState } from "react"
-import { useEffect } from "react"
 import { useContext } from "react"
 import styled from "styled-components"
 import AuthContext from "../contexts/AuthProvider"
 import { EmptyLayout } from "../layouts/EmptyLayout"
+import { ButtonPrimary } from "../components/buttons/ButtonPrimary"
+import { TextFieldOutlined } from "../components/textfields/TextFieldOutlined"
+import { Paper } from "@material-ui/core"
 
 function Copyright() {
   return (
@@ -29,25 +31,8 @@ function Copyright() {
   )
 }
 
-const useStyles = makeStyles((theme) => ({
-  paper: {
-    marginTop: theme.spacing(8),
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-  },
-  avatar: {
-    margin: theme.spacing(1),
-    backgroundColor: theme.palette.secondary.main,
-  },
-  form: {
-    width: "100%", // Fix IE 11 issue.
-    marginTop: theme.spacing(3),
-  },
-  submit: {
-    margin: theme.spacing(3, 0, 2),
-  },
-}))
+
+
 export default function Register() {
   const authCtx = useContext(AuthContext)
   const submitHandler = (e) => {
@@ -68,64 +53,35 @@ export default function Register() {
     })
   }
 
-  const classes = useStyles()
+  
   return (
     <EmptyLayout>
       <Container component="main" maxWidth="xs">
-        <CssBaseline />
-        <div className={classes.paper}>
-          <Avatar className={classes.avatar}>
+        <CustomPaper>
+          <CustomAvatar>
             <LockOutlinedIcon />
-          </Avatar>
-          <Typography component="h1" variant="h5">
+          </CustomAvatar>
+          <Typography component="h5" variant="h5">
             Sign up
           </Typography>
-          <form onSubmit={submitHandler} className={classes.form} noValidate>
+          <CustomForm onSubmit={submitHandler}  noValidate>
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
-                <TextField
-                  autoComplete="name"
-                  name="name"
-                  variant="outlined"
-                  required
-                  fullWidth
-                  id="name"
-                  label="Name"
-                  autoFocus
-                />
+                <TextFieldOutlined autoComplete="name" name="name" required fullWidth label="Name" autoFocus />
               </Grid>
               <Grid item xs={12} sm={6}>
-                <TextField
-                  type="number"
-                  variant="outlined"
-                  required
-                  fullWidth
-                  id="age"
-                  label="Age"
-                  name="age"
-                  autoComplete="age"
-                />
+                <TextFieldOutlined type="number" required fullWidth label="Age" name="age" autoComplete="age" />
               </Grid>
               <Grid item xs={12}>
-                <TextField
-                  variant="outlined"
-                  required
-                  fullWidth
-                  id="email"
-                  label="Email Address"
-                  name="email"
-                  autoComplete="email"
-                />
+                <TextFieldOutlined required fullWidth label="Email Address" name="email" autoComplete="email" />
               </Grid>
               <Grid item xs={12}>
-                <TextField
-                  variant="outlined"
+                <TextFieldOutlined
                   required
                   fullWidth
                   name="password"
                   label="Password"
                   type="password"
-                  id="password"
                   autoComplete="current-password"
                 />
               </Grid>
@@ -133,20 +89,20 @@ export default function Register() {
             {authCtx.error && <Error>{authCtx.error}</Error>}
             {authCtx.loading && <Loading>Loading...</Loading>}
             {!authCtx.loading && (
-              <Button type="submit" fullWidth variant="contained" color="primary" className={classes.submit}>
+              <ButtonPrimary type="submit" fullWidth >
                 Sign Up
-              </Button>
+              </ButtonPrimary>
             )}
 
             <Grid container justifyContent="flex-end">
               <Grid item>
-                <Link href="#" variant="body2">
+                <Link href="/login" variant="body2">
                   Already have an account? Sign in
                 </Link>
               </Grid>
             </Grid>
-          </form>
-        </div>
+          </CustomForm>
+        </CustomPaper>
         <Box mt={5}>
           <Copyright />
         </Box>
@@ -154,10 +110,27 @@ export default function Register() {
     </EmptyLayout>
   )
 }
-const Error = styled.p`
+export const CustomPaper = styled(Paper)`
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 1rem;
+`
+export const CustomAvatar = styled(Avatar)`
+  margin: 8px;
+  background-color: #f50057;
+`
+export const CustomForm = styled.form`
+   width: "100%";
+  margin-top: 1rem;
+`
+export const Error = styled.p`
+  width: 100%;
+  text-align: center;
   color: red;
 `
-const Loading = styled.p`
+export const Loading = styled.p`
   width: 100%;
   text-align: center;
 `

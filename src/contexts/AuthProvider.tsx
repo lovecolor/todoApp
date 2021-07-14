@@ -1,29 +1,13 @@
 import React from "react"
-import { useEffect } from "react"
+import { useEffect,createContext } from "react"
 import { useState } from "react"
 import useAsync from "../hooks/useAsync"
 import { useAppApiClient } from "../hooks/useAppApiClient"
+import { User } from "../services/api/types/User"
+import { LoginRequest } from "../services/api/types/LoginRequest"
+import { RegisterRequest } from "../services/api/types/RegisterRequest"
 
-type user = {
-  age: number
-  _id: string
-  name: string
-  email: string
-  createdAt: string
-  updatedAt: string
-  __v: number
-}
-type RegisterRequest = {
-  name: string
-  age: number
-  email: string
-  password: string
-}
-type LoginRequest = {
-  email: string
-  password: string
-}
-const AuthContext = React.createContext<{
+const AuthContext = createContext<{
   user: any
   loading: boolean
   error: string | null
@@ -40,7 +24,7 @@ const AuthContext = React.createContext<{
 })
 
 export const AuthProvider: React.FC = (props) => {
-  const [user, setUser] = useState<user | null>(null)
+  const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setErorr] = useState<string | null>(null)
 
@@ -50,14 +34,14 @@ export const AuthProvider: React.FC = (props) => {
   const registerUser = useAsync(api.register)
   const loginUser = useAsync(api.login)
 
-  const signUpHandler = (data) => {
+  const signUp = (data) => {
     registerUser.run(data)
   }
-  const loginHandler = (data) => {
+  const login = (data) => {
     loginUser.run(data)
   }
 
-  const logoutHandler = () => {
+  const logout = () => {
     setUser(null)
     localStorage.removeItem("token")
   }
@@ -65,14 +49,13 @@ export const AuthProvider: React.FC = (props) => {
     user,
     loading,
     error,
-    signUp: signUpHandler,
-    login: loginHandler,
-    logout: logoutHandler,
+    signUp,
+    login,
+    logout,
   }
   useEffect(() => {
     const token = localStorage.getItem("token")
     if (token) {
-      console.log("token")
       currentUser.run()
     }
   }, [])
@@ -89,8 +72,10 @@ export const AuthProvider: React.FC = (props) => {
   }, [registerUser.loading])
   useEffect(() => {
     setLoading(loginUser.loading)
+
     if (!loginUser.loading) {
       const { result, error } = loginUser
+      
       if (result) {
         setUser(result.user)
         localStorage.setItem("token", result.token)
@@ -98,6 +83,7 @@ export const AuthProvider: React.FC = (props) => {
       if (error) setErorr(error)
     }
   }, [loginUser.loading])
+
   useEffect(() => {
     setLoading(currentUser.loading)
     if (!currentUser.loading) {

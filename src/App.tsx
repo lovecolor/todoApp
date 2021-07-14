@@ -24,15 +24,16 @@ export const App = () => {
                 <HomePage></HomePage>
               </Route>
               {!isLoggedIn && (
-                <Route path={links.login()}>
-                  <Login></Login>
-                </Route>
+                <>
+                  <Route path={links.login()}>
+                    <Login></Login>
+                  </Route>
+                  <Route path={links.register()}>
+                    <Register></Register>
+                  </Route>
+                </>
               )}
-              {!isLoggedIn && (
-                <Route path={links.register()}>
-                  <Register></Register>
-                </Route>
-              )}
+
               <Route path="*">
                 <Redirect to={links.home()}></Redirect>
               </Route>
