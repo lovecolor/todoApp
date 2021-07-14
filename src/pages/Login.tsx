@@ -52,17 +52,8 @@ export const Login = () => {
             Sign in
           </Typography>
           <CustomForm onSubmit={submitHandler}>
+            <CustomTextField required fullWidth label="Email Address" name="email" autoComplete="email" autoFocus />
             <CustomTextField
-              margin="normal"
-              required
-              fullWidth
-              label="Email Address"
-              name="email"
-              autoComplete="email"
-              autoFocus
-            />
-            <CustomTextField
-              margin="normal"
               required
               fullWidth
               name="password"

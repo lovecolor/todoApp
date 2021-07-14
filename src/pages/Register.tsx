@@ -17,24 +17,31 @@ import { EmptyLayout } from "../layouts/EmptyLayout"
 import { ButtonPrimary } from "../components/buttons/ButtonPrimary"
 import { TextFieldOutlined } from "../components/textfields/TextFieldOutlined"
 import { Paper } from "@material-ui/core"
+import { RegisterRequest } from "../services/api/types/RegisterRequest"
 
 export default function Register() {
   const authCtx = useContext(AuthContext)
+
+  const [formValue, setFormValue] = useState({
+    name: "",
+    email: "",
+    age: "",
+    password: "",
+  })
+  const changeFormHandler = (e) => {
+    setFormValue((prevState) => {
+      const { name, value } = e.target
+      let obj = { ...prevState }
+      obj[name] = value
+      return obj
+    })
+  }
   const submitHandler = (e) => {
     e.preventDefault()
-    const formValue: any = new FormData(e.target)
-    const value: any = {}
-    for (const key of formValue.entries()) {
-      value[key[0]] = key[1]
-    }
-
-    const { name, age, email, password, passwordAgain } = value
-
+    const age = +formValue.age
     authCtx.signUp({
-      name,
+      ...formValue,
       age,
-      email,
-      password,
     })
   }
 
@@ -51,16 +58,40 @@ export default function Register() {
           <CustomForm onSubmit={submitHandler}>
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
-                <TextFieldOutlined autoComplete="name" name="name" required fullWidth label="Name" autoFocus />
+                <TextFieldOutlined
+                  onChange={changeFormHandler}
+                  autoComplete="name"
+                  name="name"
+                  required
+                  fullWidth
+                  label="Name"
+                  autoFocus
+                />
               </Grid>
               <Grid item xs={12} sm={6}>
-                <TextFieldOutlined type="number" required fullWidth label="Age" name="age" autoComplete="age" />
-              </Grid>
-              <Grid item xs={12}>
-                <TextFieldOutlined required fullWidth label="Email Address" name="email" autoComplete="email" />
+                <TextFieldOutlined
+                  onChange={changeFormHandler}
+                  type="number"
+                  required
+                  fullWidth
+                  label="Age"
+                  name="age"
+                  autoComplete="age"
+                />
               </Grid>
               <Grid item xs={12}>
                 <TextFieldOutlined
+                  onChange={changeFormHandler}
+                  required
+                  fullWidth
+                  label="Email Address"
+                  name="email"
+                  autoComplete="email"
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextFieldOutlined
+                  onChange={changeFormHandler}
                   required
                   fullWidth
                   name="password"
