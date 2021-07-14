@@ -63,7 +63,7 @@ export const Login = () => {
           <Typography component="h5" variant="h5">
             Sign in
           </Typography>
-          <CustomForm onSubmit={submitHandler} className={classes.form} noValidate>
+          <CustomForm onSubmit={submitHandler}  >
             <TextFieldOutlined
               margin="normal"
               required

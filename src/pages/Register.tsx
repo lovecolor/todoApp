@@ -64,7 +64,7 @@ export default function Register() {
           <Typography component="h5" variant="h5">
             Sign up
           </Typography>
-          <CustomForm onSubmit={submitHandler}  noValidate>
+          <CustomForm onSubmit={submitHandler} >
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
                 <TextFieldOutlined autoComplete="name" name="name" required fullWidth label="Name" autoFocus />
