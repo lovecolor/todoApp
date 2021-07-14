@@ -20,7 +20,7 @@ export const createApiClient = (args: CreateApiClientArgs): AxiosInstance => {
 
       return response;
     },
-    function (error) {
+    (error) => {
       if (error.response.status === 401) {
         localStorage.clear();
       }

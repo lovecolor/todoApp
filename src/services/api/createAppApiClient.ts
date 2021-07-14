@@ -5,12 +5,12 @@ export const createAppApiClient = (api: AxiosInstance) => {
   return {
     login: login(api),
     register: register(api),
-    getLoggedInUserviaToken:getLoggedInUserviaToken(api)
+    getCurrentUser:getCurrentUser(api)
   }
 }
 
 type LoginRequest = {
-  username: string
+  email: string
   password: string
 }
 
@@ -30,9 +30,10 @@ const login =
     }
 
 type RegisterRequest = {
-  username: string
+  email: string
   password: string
   age: number
+  name:string
 }
 
 
@@ -44,7 +45,7 @@ const register =
 
       return res.data
     }
-const getLoggedInUserviaToken =
+const getCurrentUser =
   (api: AxiosInstance) =>
     async (): Promise<LoginResponse | undefined> => {
       const res = await api.get<LoginResponse>("/user/me")

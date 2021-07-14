@@ -3,15 +3,16 @@ import "./index.css"
 import { App } from "./App"
 import reportWebVitals from "./reportWebVitals"
 import { BrowserRouter } from "react-router-dom"
-import { AuthContextProvider } from "./contexts/auth-context"
-
+import { AuthProvider } from "./contexts/AuthProvider"
 
 const Root = () => {
-  return <AuthContextProvider>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
-  </AuthContextProvider>
+  return (
+    <AuthProvider>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </AuthProvider>
+  )
 }
 
 ReactDOM.render(<Root />, document.getElementById("root"))

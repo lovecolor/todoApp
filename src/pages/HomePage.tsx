@@ -1,5 +1,9 @@
-import { EmptyLayout } from "../layouts/EmptyLayout"
+import { MainLayout } from "../layouts/MainLayout"
 
 export const HomePage: React.FC = (props) => {
-    return <EmptyLayout><h1>HomePage</h1></EmptyLayout>
+  return (
+    <MainLayout>
+      <h1>HomePage</h1>
+    </MainLayout>
+  )
 }
