@@ -1,44 +1,30 @@
-import React, { useContext } from "react"
-import Avatar from "@material-ui/core/Avatar"
-import Button from "@material-ui/core/Button"
-import CssBaseline from "@material-ui/core/CssBaseline"
-import TextField from "@material-ui/core/TextField"
+import React, { useContext, useState } from "react"
 import FormControlLabel from "@material-ui/core/FormControlLabel"
 import Checkbox from "@material-ui/core/Checkbox"
 import Link from "@material-ui/core/Link"
 import Grid from "@material-ui/core/Grid"
-import Box from "@material-ui/core/Box"
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined"
 import Typography from "@material-ui/core/Typography"
-import { makeStyles } from "@material-ui/core/styles"
 import Container from "@material-ui/core/Container"
 import { EmptyLayout } from "../layouts/EmptyLayout"
 import AuthContext from "../contexts/AuthProvider"
 import { Error, Loading, CustomAvatar, CustomPaper, CustomForm, CustomButton } from "./Register"
 import { TextFieldOutlined } from "../components/textfields/TextFieldOutlined"
-import { ButtonPrimary } from "../components/buttons/ButtonPrimary"
 import styled from "styled-components"
 
 export const Login = () => {
-  // to call API
-  // const api = useAppApiClient()
-  // api.login({ username: "abc", password: "def" })
-
+  const [formValue, setFormValue] = useState({
+    email: "",
+    password: "",
+  })
+  const changeFormHandler = (e) => {
+    const { name, value } = e.target
+    setFormValue({ ...formValue, [name]: value })
+  }
   const authCtx = useContext(AuthContext)
   const submitHandler = (e) => {
     e.preventDefault()
-    const formValue: any = new FormData(e.target)
-    const value: any = {}
-    for (const key of formValue.entries()) {
-      value[key[0]] = key[1]
-    }
-
-    const { email, password } = value
-
-    authCtx.login({
-      email,
-      password,
-    })
+    authCtx.login(formValue)
   }
 
   return (
@@ -52,8 +38,17 @@ export const Login = () => {
             Sign in
           </Typography>
           <CustomForm onSubmit={submitHandler}>
-            <CustomTextField required fullWidth label="Email Address" name="email" autoComplete="email" autoFocus />
             <CustomTextField
+              onChange={changeFormHandler}
+              required
+              fullWidth
+              label="Email Address"
+              name="email"
+              autoComplete="email"
+              autoFocus
+            />
+            <CustomTextField
+              onChange={changeFormHandler}
               required
               fullWidth
               name="password"

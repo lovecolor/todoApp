@@ -29,12 +29,8 @@ export default function Register() {
     password: "",
   })
   const changeFormHandler = (e) => {
-    setFormValue((prevState) => {
-      const { name, value } = e.target
-      let obj = { ...prevState }
-      obj[name] = value
-      return obj
-    })
+    const { name, value } = e.target
+    setFormValue({ ...formValue, [name]: value })
   }
   const submitHandler = (e) => {
     e.preventDefault()
