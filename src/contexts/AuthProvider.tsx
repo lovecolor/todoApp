@@ -1,5 +1,5 @@
 import React from "react"
-import { useEffect,createContext } from "react"
+import { useEffect, createContext } from "react"
 import { useState } from "react"
 import useAsync from "../hooks/useAsync"
 import { useAppApiClient } from "../hooks/useAppApiClient"
@@ -8,6 +8,7 @@ import { LoginRequest } from "../services/api/types/LoginRequest"
 import { RegisterRequest } from "../services/api/types/RegisterRequest"
 
 const AuthContext = createContext<{
+  token: string | null
   user: any
   loading: boolean
   error: string | null
@@ -15,6 +16,7 @@ const AuthContext = createContext<{
   signUp: (data: RegisterRequest) => void
   logout: () => void
 }>({
+  token: null,
   user: null,
   loading: false,
   error: null,
@@ -24,6 +26,7 @@ const AuthContext = createContext<{
 })
 
 export const AuthProvider: React.FC = (props) => {
+  const [token, setToken] = useState<string | null>(null)
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setErorr] = useState<string | null>(null)
@@ -46,6 +49,7 @@ export const AuthProvider: React.FC = (props) => {
     localStorage.removeItem("token")
   }
   const contextValue = {
+    token,
     user,
     loading,
     error,
@@ -54,8 +58,9 @@ export const AuthProvider: React.FC = (props) => {
     logout,
   }
   useEffect(() => {
-    const token = localStorage.getItem("token")
-    if (token) {
+    const currentToken = localStorage.getItem("token")
+    if (currentToken) {
+      setToken(currentToken)
       currentUser.run()
     }
   }, [])
@@ -63,22 +68,25 @@ export const AuthProvider: React.FC = (props) => {
     setLoading(registerUser.loading)
     if (!registerUser.loading) {
       const { result, error } = registerUser
+
       if (result) {
-        setUser(result.user)
-        localStorage.setItem("token", result.token)
+        const { user, token } = result
+        setUser(user)
+        localStorage.setItem("token", token)
+        setToken(token)
       }
       if (error) setErorr(error)
     }
   }, [registerUser.loading])
   useEffect(() => {
     setLoading(loginUser.loading)
-
+    const { result, error } = loginUser
     if (!loginUser.loading) {
-      const { result, error } = loginUser
-      
       if (result) {
-        setUser(result.user)
-        localStorage.setItem("token", result.token)
+        const { user, token } = result
+        setUser(user)
+        localStorage.setItem("token", token)
+        setToken(token)
       }
       if (error) setErorr(error)
     }
@@ -92,6 +100,7 @@ export const AuthProvider: React.FC = (props) => {
         setUser(result)
       }
       if (error) {
+        setToken(null)
         localStorage.clear()
       }
     }
