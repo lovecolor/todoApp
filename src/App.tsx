@@ -7,6 +7,7 @@ import { HomePage } from "./pages/HomePage"
 import { useContext } from "react"
 import AuthContext from "./contexts/AuthProvider"
 import Register, { Loading } from "./pages/Register"
+import UserProfile from "./pages/UserProfile"
 
 export const App = () => {
   const links = useLinks().common
@@ -18,7 +19,7 @@ export const App = () => {
       <SnackbarProvider maxSnack={3}>
         <StylesProvider injectFirst>
           <CssBaseline>
-            {authCtx.loading && authCtx.token ? (
+            {authCtx.loading && authCtx.token && !authCtx.user ? (
               <Loading>Loading...</Loading>
             ) : (
               <Switch>
@@ -26,6 +27,12 @@ export const App = () => {
                   {!isLoggedIn && <Redirect to={links.login()}></Redirect>}
                   <HomePage></HomePage>
                 </Route>
+                {isLoggedIn && (
+                  <Route path={links.profile()} exact>
+                    <UserProfile></UserProfile>
+                  </Route>
+                )}
+
                 {!isLoggedIn && (
                   <>
                     <Route path={links.login()}>

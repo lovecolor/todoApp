@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useContext, useState } from "react"
 import AppBar from "@material-ui/core/AppBar"
 import Toolbar from "@material-ui/core/Toolbar"
 import Typography from "@material-ui/core/Typography"
@@ -12,21 +12,28 @@ import MenuItem from "@material-ui/core/MenuItem"
 import Menu from "@material-ui/core/Menu"
 import styled from "styled-components"
 import { Grid } from "@material-ui/core"
+import AuthContext from "../../contexts/AuthProvider"
+import { useHistory } from "react-router"
 
 export const MainNavigation: React.FC = (props) => {
+  const history = useHistory()
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const open = Boolean(anchorEl)
 
+  const authCtx = useContext(AuthContext)
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget)
-    console.log(anchorEl) 
+    console.log(anchorEl)
   }
 
   const handleClose = () => {
     setAnchorEl(null)
   }
-  const logoutHandler=()=>{
-      
+  const logoutHandler = () => {
+    authCtx.logout()
+  }
+  const profileHandler = () => {
+    history.replace("/profile")
   }
   return (
     <div>
@@ -64,8 +71,8 @@ export const MainNavigation: React.FC = (props) => {
               open={open}
               onClose={handleClose}
             >
-              <MenuItem onClick={handleClose}>Profile</MenuItem>
-              <MenuItem onClick={handleClose}>Logout</MenuItem>
+              <MenuItem onClick={profileHandler}>Profile</MenuItem>
+              <MenuItem onClick={logoutHandler}>Logout</MenuItem>
             </Menu>
           </div>
         </Toolbar>
@@ -73,6 +80,3 @@ export const MainNavigation: React.FC = (props) => {
     </div>
   )
 }
-const Root = styled.div`
-  display: flex;
-`

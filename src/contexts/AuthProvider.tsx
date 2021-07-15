@@ -6,6 +6,7 @@ import { useAppApiClient } from "../hooks/useAppApiClient"
 import { User } from "../services/api/types/User"
 import { LoginRequest } from "../services/api/types/LoginRequest"
 import { RegisterRequest } from "../services/api/types/RegisterRequest"
+import { UpdateUserRequest } from "../services/api/types/UpdateUserRequest"
 
 const AuthContext = createContext<{
   token: string | null
@@ -15,6 +16,7 @@ const AuthContext = createContext<{
   login: (data: LoginRequest) => void
   signUp: (data: RegisterRequest) => void
   logout: () => void
+  update: (data: UpdateUserRequest) => void
 }>({
   token: null,
   user: null,
@@ -22,6 +24,7 @@ const AuthContext = createContext<{
   error: null,
   login: (data: LoginRequest) => {},
   signUp: (data: RegisterRequest) => {},
+  update: (data: UpdateUserRequest) => {},
   logout: () => {},
 })
 
@@ -36,6 +39,8 @@ export const AuthProvider: React.FC = (props) => {
   const currentUser = useAsync(api.getCurrentUser)
   const registerUser = useAsync(api.register)
   const loginUser = useAsync(api.login)
+  const logoutUser = useAsync(api.logout)
+  const updateUser = useAsync(api.updateUser)
 
   const signUp = (data) => {
     registerUser.run(data)
@@ -46,7 +51,12 @@ export const AuthProvider: React.FC = (props) => {
 
   const logout = () => {
     setUser(null)
+    setToken(null)
     localStorage.removeItem("token")
+    logoutUser.run()
+  }
+  const update = (data) => {
+    updateUser.run(data)
   }
   const contextValue = {
     token,
@@ -56,6 +66,7 @@ export const AuthProvider: React.FC = (props) => {
     signUp,
     login,
     logout,
+    update,
   }
   useEffect(() => {
     const currentToken = localStorage.getItem("token")
@@ -105,6 +116,19 @@ export const AuthProvider: React.FC = (props) => {
       }
     }
   }, [currentUser.loading])
+  useEffect(() => {
+    setLoading(updateUser.loading)
+    if (!updateUser.loading) {
+      const { result, error } = updateUser
+      if (result) {
+        setUser(result)
+        setErorr(null)
+      }
+      if (error) {
+        setErorr(error)
+      }
+    }
+  }, [updateUser.loading])
 
   return <AuthContext.Provider value={contextValue}>{props.children}</AuthContext.Provider>
 }

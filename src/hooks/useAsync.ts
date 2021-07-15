@@ -8,7 +8,7 @@ const useAsync = (asyncFuntion: (...data: any) => any) => {
   const run = useCallback(
     async (...data: any) => {
       setLoading(true)
-
+      setError(null)
       try {
         const responseData = await asyncFuntion(...data)
         setResult(responseData)
