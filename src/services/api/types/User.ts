@@ -1,5 +1,9 @@
 export type User = {
-  id?: string
-  username: string
-  password: string
+  age: number
+  _id: string
+  name: string
+  email: string
+  createdAt: string
+  updatedAt: string
+  __v: number
 }
