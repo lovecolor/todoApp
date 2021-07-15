@@ -2,6 +2,7 @@ import { AxiosInstance } from "axios"
 import { User } from "./types/User"
 import { LoginRequest } from "./types/LoginRequest"
 import { RegisterRequest } from "./types/RegisterRequest"
+import { LogoutReponse } from "./types/LoutoutReponse"
 
 export const createAppApiClient = (api: AxiosInstance) => {
   return {
@@ -37,6 +38,11 @@ const register =
   }
 const getCurrentUser = (api: AxiosInstance) => async (): Promise<LoginResponse | undefined> => {
   const res = await api.get<LoginResponse>("/user/me")
+
+  return res.data
+}
+const logout = (api: AxiosInstance) => async (): Promise<LogoutReponse|undefined> => {
+  const res = await api.get<LogoutReponse>("/user/logout")
 
   return res.data
 }

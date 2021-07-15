@@ -9,7 +9,7 @@ import AuthContext from "./contexts/AuthProvider"
 import Register, { Loading } from "./pages/Register"
 
 export const App = () => {
-  const links = useLinks.common
+  const links = useLinks().common
   const authCtx = useContext(AuthContext)
   const isLoggedIn = authCtx.user != null
   const token = localStorage.getItem("token")
@@ -23,7 +23,7 @@ export const App = () => {
             ) : (
               <Switch>
                 <Route path={links.home()} exact>
-                  {!isLoggedIn && <Redirect to={links.register()}></Redirect>}
+                  {!isLoggedIn && <Redirect to={links.login()}></Redirect>}
                   <HomePage></HomePage>
                 </Route>
                 {!isLoggedIn && (
