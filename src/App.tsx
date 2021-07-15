@@ -11,14 +11,14 @@ import Register, { Loading } from "./pages/Register"
 export const App = () => {
   const links = useLinks().common
   const authCtx = useContext(AuthContext)
-  const isLoggedIn = authCtx.user != null
-  const token = localStorage.getItem("token")
+  const isLoggedIn = !!authCtx.user
+
   return (
     <>
       <SnackbarProvider maxSnack={3}>
         <StylesProvider injectFirst>
           <CssBaseline>
-            {authCtx.loading && token ? (
+            {authCtx.loading && authCtx.token ? (
               <Loading>Loading...</Loading>
             ) : (
               <Switch>
