@@ -1,12 +1,12 @@
 import { Router } from "react-router"
-import { MainNavigation } from "../components/layout/MainNavigation"
+import { NavBar } from "../components/NavBar"
 import { MainLayout } from "../layouts/MainLayout"
 import UserProfile from "./UserProfile"
 
 export const HomePage: React.FC = (props) => {
   return (
     <MainLayout>
-      <MainNavigation></MainNavigation>
+      <NavBar></NavBar>
       <main>
         
       </main>

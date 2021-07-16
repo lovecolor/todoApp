@@ -5,14 +5,32 @@ import Link from "@material-ui/core/Link"
 import Grid from "@material-ui/core/Grid"
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined"
 import Typography from "@material-ui/core/Typography"
-import Container from "@material-ui/core/Container"
+
 import { EmptyLayout } from "../layouts/EmptyLayout"
 import AuthContext from "../contexts/AuthProvider"
 import { Error, Loading, CustomAvatar, CustomPaper, CustomForm, CustomButton } from "./Register"
 import { TextFieldOutlined } from "../components/textfields/TextFieldOutlined"
 import styled from "styled-components"
+import useAsync from "../hooks/useAsync"
+import { useAppApiClient } from "../hooks/useAppApiClient"
+import { useHistory } from "react-router"
+import { useLinks } from "../hooks/useLinks"
+import { LoginRequest } from "../services/api/types/LoginRequest"
+import { Container } from "@material-ui/core"
 
 export const Login = () => {
+  const links = useLinks().common
+  const history = useHistory()
+  const authCtx = useContext(AuthContext)
+  const api = useAppApiClient()
+  const handleLogin = useAsync(async (data: LoginRequest) => {
+    const result = await api.login(data)
+    if (result) {
+      authCtx.login(result)
+      history.push(links.home())
+    }
+  })
+  const { error, loading } = handleLogin
   const [formValue, setFormValue] = useState({
     email: "",
     password: "",
@@ -21,10 +39,10 @@ export const Login = () => {
     const { name, value } = e.target
     setFormValue({ ...formValue, [name]: value })
   }
-  const authCtx = useContext(AuthContext)
+
   const submitHandler = (e) => {
     e.preventDefault()
-    authCtx.login(formValue)
+    handleLogin.run(formValue)
   }
 
   return (
@@ -57,32 +75,33 @@ export const Login = () => {
               autoComplete="current-password"
             />
             <FormControlLabel control={<Checkbox value="remember" color="primary" />} label="Remember me" />
-            {authCtx.error && <Error>{authCtx.error}</Error>}
-            {authCtx.loading && <Loading>Loading...</Loading>}
-            {!authCtx.loading && (
+            {error && <Error>{error}</Error>}
+            {loading && <Loading>Loading...</Loading>}
+            {!loading && (
               <CustomButton type="submit" fullWidth>
                 Sign In
               </CustomButton>
             )}
 
-            <Grid container>
-              <Grid item xs>
-                <Link href="#" variant="body2">
-                  Forgot password?
-                </Link>
-              </Grid>
-              <Grid item>
-                <Link href="/register" variant="body2">
-                  {"Don't have an account? Sign Up"}
-                </Link>
-              </Grid>
-            </Grid>
+            <Actions>
+              <Link href="#" variant="body2">
+                Forgot password?
+              </Link>
+              <Link href="/register" variant="body2">
+                {"Don't have an account? Sign Up"}
+              </Link>
+            </Actions>
           </CustomForm>
         </CustomPaper>
       </Container>
     </EmptyLayout>
   )
 }
-const CustomTextField = styled(TextFieldOutlined)`
+export const CustomTextField = styled(TextFieldOutlined)`
   margin: 0.5rem 0;
+`
+
+export const Actions = styled.div`
+  display: flex;
+  justify-content: space-between;
 `

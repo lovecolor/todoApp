@@ -12,18 +12,29 @@ import MenuItem from "@material-ui/core/MenuItem"
 import Menu from "@material-ui/core/Menu"
 import styled from "styled-components"
 import { Grid } from "@material-ui/core"
-import AuthContext from "../../contexts/AuthProvider"
+import AuthContext from "../contexts/AuthProvider"
 import { useHistory } from "react-router"
+import { useAppApiClient } from "../hooks/useAppApiClient"
+import useAsync from "../hooks/useAsync"
+import { useLinks } from "../hooks/useLinks"
 
-export const MainNavigation: React.FC = (props) => {
+export const NavBar: React.FC = (props) => {
   const history = useHistory()
+  const api = useAppApiClient()
+  const links = useLinks().common
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const open = Boolean(anchorEl)
 
   const authCtx = useContext(AuthContext)
+  const handleLogout = useAsync(async () => {
+    const result = await api.logout()
+    if (result) {
+      authCtx.logout()
+      history.push(links.login())
+    }
+  })
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget)
-    console.log(anchorEl)
   }
 
   const handleClose = () => {
@@ -33,7 +44,7 @@ export const MainNavigation: React.FC = (props) => {
     authCtx.logout()
   }
   const profileHandler = () => {
-    history.replace("/profile")
+    history.push("/profile")
   }
   return (
     <div>
@@ -57,7 +68,6 @@ export const MainNavigation: React.FC = (props) => {
               <AccountCircle />
             </IconButton>
             <Menu
-              id="menu-appbar"
               anchorEl={anchorEl}
               anchorOrigin={{
                 vertical: "top",

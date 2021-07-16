@@ -13,42 +13,48 @@ export const App = () => {
   const links = useLinks().common
   const authCtx = useContext(AuthContext)
   const isLoggedIn = !!authCtx.user
+  const token = localStorage.getItem("token")
 
   return (
     <>
       <SnackbarProvider maxSnack={3}>
         <StylesProvider injectFirst>
           <CssBaseline>
-            {authCtx.loading && authCtx.token && !authCtx.user ? (
-              <Loading>Loading...</Loading>
-            ) : (
-              <Switch>
-                <Route path={links.home()} exact>
-                  {!isLoggedIn && <Redirect to={links.login()}></Redirect>}
-                  <HomePage></HomePage>
-                </Route>
-                {isLoggedIn && (
-                  <Route path={links.profile()} exact>
-                    <UserProfile></UserProfile>
-                  </Route>
-                )}
-
-                {!isLoggedIn && (
+            <Switch>
+              <Route path={links.home()} exact>
+                {token && !isLoggedIn ? (
+                  <Loading>Loading...</Loading>
+                ) : (
                   <>
-                    <Route path={links.login()}>
-                      <Login></Login>
-                    </Route>
-                    <Route path={links.register()}>
-                      <Register></Register>
-                    </Route>
+                    {!isLoggedIn && <Redirect to={links.login()}></Redirect>}
+                    <HomePage></HomePage>
                   </>
                 )}
+              </Route>
 
-                <Route path="*">
-                  <Redirect to={links.home()}></Redirect>
-                </Route>
-              </Switch>
-            )}
+              {isLoggedIn && (
+                <>
+                  <Route path={links.profile()}>
+                    <UserProfile></UserProfile>
+                  </Route>
+                </>
+              )}
+
+              {!isLoggedIn && (
+                <>
+                  <Route path={links.login()}>
+                    <Login></Login>
+                  </Route>
+                  <Route path={links.register()}>
+                    <Register></Register>
+                  </Route>
+                </>
+              )}
+              <Route path="*">
+                <Redirect to={links.home()}></Redirect>
+              </Route>
+            </Switch>
+            
           </CssBaseline>
         </StylesProvider>
       </SnackbarProvider>
