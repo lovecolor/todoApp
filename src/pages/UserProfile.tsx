@@ -143,7 +143,7 @@ export default function UserProfile() {
     </MainLayout>
   )
 }
-const CustomSpan = styled.span`
+export const CustomSpan = styled.span`
   font-size: 1.3rem;
   text-align: center;
 `
