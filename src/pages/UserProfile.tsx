@@ -19,7 +19,7 @@ import { useAppApiClient } from "../hooks/useAppApiClient"
 import { Alert } from "@material-ui/lab"
 
 export default function UserProfile() {
-  const [isShowAlert, setIsShowAler] = useState(false)
+  const [isShowAlert, setIsShowAlert] = useState(false)
   const history = useHistory()
   const api = useAppApiClient()
   const links = useLinks().common
@@ -50,7 +50,7 @@ export default function UserProfile() {
     })
   }
   const backHandler = () => {
-    history.goBack()
+    history.push(links.home()) 
   }
   const cancelEditHandler = () => {
     setIsEdit(false)
@@ -63,9 +63,11 @@ export default function UserProfile() {
       }
       if (result) {
         authCtx.getCurrentUser()
-        setIsShowAler(true)
+      }
+      if (result || error) {
+        setIsShowAlert(true)
         timeout = setTimeout(() => {
-          setIsShowAler(false)
+          setIsShowAlert(false)
         }, 2000)
       }
     }
@@ -147,7 +149,7 @@ export const CustomSpan = styled.span`
   font-size: 1.3rem;
   text-align: center;
 `
-const CustomAlert = styled(Alert)`
+export const CustomAlert = styled(Alert)`
   position: fixed;
   top: 1rem;
   left: 1rem;
@@ -164,7 +166,7 @@ const CustomAlert = styled(Alert)`
     }
   }
 `
-const CustomButton = styled(ButtonPrimary)`
+export const CustomButton = styled(ButtonPrimary)`
   margin: 1rem;
 `
 const Actions = styled.div`

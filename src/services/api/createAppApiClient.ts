@@ -14,6 +14,7 @@ export const createAppApiClient = (api: AxiosInstance) => {
     logout: logout(api),
     updateUser: updateUser(api),
     getAllTask: getAllTask(api),
+    addTask: addTask(api),
   }
 }
 
@@ -72,3 +73,14 @@ const getAllTask = (api: AxiosInstance) => async (): Promise<Task[] | undefined>
 
   return res.data.data
 }
+type AddTaskReponse = {
+  success: boolean
+  data: Task
+}
+const addTask =
+  (api: AxiosInstance) =>
+  async (description: string): Promise<Task | undefined> => {
+    const res = await api.post<AddTaskReponse>("/task", { description })
+
+    return res.data.data
+  }

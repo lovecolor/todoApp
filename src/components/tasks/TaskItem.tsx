@@ -32,6 +32,7 @@ export const TaskItem: React.FC<{
   )
 }
 const CustomCard = styled(Card)`
+  margin: 1rem;
   width: 275px;
 `
 const CustomCardContent = styled(CardContent)`
@@ -55,5 +56,5 @@ const Status = styled.div<{ completed: boolean }>`
   height: 20%;
   border-bottom: 1px solid lightgray;
   border-top: 1px solid lightgray;
-  transform: .25s ease;
+  transform: 0.25s ease;
 `
