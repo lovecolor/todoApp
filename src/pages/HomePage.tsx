@@ -21,6 +21,11 @@ export const HomePage: React.FC = (props) => {
   const addTaskHandler = (task: Task) => {
     setListTask([...listTask, task])
   }
+  const updateTaskHandler = (editedTask: Task) => {
+    const idEdit = listTask.findIndex((task) => task._id === editedTask._id)
+
+    setListTask([...listTask.slice(0, idEdit), editedTask, ...listTask.slice(idEdit + 1)])
+  }
   useEffect(() => {
     run()
   }, [])
@@ -34,7 +39,7 @@ export const HomePage: React.FC = (props) => {
         {loading && <Loading>Loading...</Loading>}
         {error && <Error>{error}</Error>}
         {listTask.map((task: Task) => (
-          <TaskItem key={task._id} task={task}></TaskItem>
+          <TaskItem onUpdate={updateTaskHandler.bind(null)} key={task._id} task={task}></TaskItem>
         ))}
       </Main>
       <NewTask onAddTask={addTaskHandler}></NewTask>
@@ -43,8 +48,6 @@ export const HomePage: React.FC = (props) => {
 }
 const Main = styled.main`
   width: 100%;
-  padding: 1rem;
   display: flex;
   flex-wrap: wrap;
-  
 `

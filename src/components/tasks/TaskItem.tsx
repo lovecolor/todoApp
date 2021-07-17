@@ -9,21 +9,40 @@ import DeleteIcon from "@material-ui/icons/Delete"
 import EditIcon from "@material-ui/icons/Edit"
 import styled from "styled-components"
 import { Task } from "../../services/api/types/Task"
+import { UpdateTask } from "./UpdateTask"
+import useAsync from "../../hooks/useAsync"
+import { useAppApiClient } from "../../hooks/useAppApiClient"
+import { useEffect } from "react"
 
 export const TaskItem: React.FC<{
   task: Task
+  onUpdate: (task: Task) => void
 }> = (props) => {
   const { task } = props
+  const api = useAppApiClient()
+  const { run, result } = useAsync(api.updateTask)
+  const changeStatusHandler = () => {
+    const completed = !task.completed
+    run({
+      id: task._id,
+      data: {
+        completed,
+      },
+    })
+  }
+  useEffect(() => {
+    if (result) props.onUpdate(result)
+  }, [result])
   return (
     <CustomCard>
       <CustomCardContent>
         <Description>{task.description}</Description>
-        <Status completed={task.completed}>Completed</Status>
+        <Status onClick={changeStatusHandler} completed={task.completed}>
+          Completed
+        </Status>
       </CustomCardContent>
       <CardActions>
-        <ButtonPrimary variant="contained" color="primary" startIcon={<EditIcon />}>
-          Edit
-        </ButtonPrimary>
+        <UpdateTask onUpdate={props.onUpdate} task={task}></UpdateTask>
         <Button variant="contained" color="secondary" startIcon={<DeleteIcon />}>
           Delete
         </Button>
@@ -56,5 +75,5 @@ const Status = styled.div<{ completed: boolean }>`
   height: 20%;
   border-bottom: 1px solid lightgray;
   border-top: 1px solid lightgray;
-  transform: 0.25s ease;
+  transition: 0.25s ease;
 `
