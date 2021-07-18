@@ -5,6 +5,7 @@ import { Router } from "react-router"
 import styled from "styled-components"
 import { NavBar } from "../components/NavBar"
 import { TaskItem } from "../components/tasks/TaskItem"
+import { TaskList } from "../components/tasks/TaskList"
 import { useAppApiClient } from "../hooks/useAppApiClient"
 import useAsync from "../hooks/useAsync"
 import { MainLayout } from "../layouts/MainLayout"
@@ -36,17 +37,14 @@ export const HomePage: React.FC = (props) => {
     <MainLayout>
       <NavBar></NavBar>
       <Main>
-        {loading && <Loading>Loading...</Loading>}
-        {error && <Error>{error}</Error>}
-        {listTask.map((task: Task) => (
-          <TaskItem onUpdate={updateTaskHandler.bind(null)} key={task._id} task={task}></TaskItem>
-        ))}
+        <TaskList></TaskList>
+        <NewTask></NewTask>
       </Main>
-      <NewTask onAddTask={addTaskHandler}></NewTask>
     </MainLayout>
   )
-}
-const Main = styled.main`
+} 
+
+const Main = styled.div`
   width: 100%;
   display: flex;
   flex-wrap: wrap;

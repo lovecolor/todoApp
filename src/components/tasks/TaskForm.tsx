@@ -49,7 +49,8 @@ export const TaskForm: React.FC<{
       } else requestData = value
       run(requestData)
     }
-  } 
+  }
+ 
   useEffect(() => {
     let timeout
     if (!loading) {

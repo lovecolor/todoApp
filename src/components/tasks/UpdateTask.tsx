@@ -5,8 +5,11 @@ import { TaskForm } from "./TaskForm"
 import { useState } from "react"
 import { useAppApiClient } from "../../hooks/useAppApiClient"
 import { Task } from "../../services/api/types/Task"
+import { useContext } from "react"
+import TaskContext from "../../contexts/TaskProvider"
 
-export const UpdateTask: React.FC<{ task: Task; onUpdate: (task: Task) => void }> = (props) => {
+export const UpdateTask: React.FC<{ task: Task }> = (props) => {
+  const taskCtx = useContext(TaskContext)
   const api = useAppApiClient()
   const [open, setOpen] = useState(false)
   const handleOpen = () => {
@@ -17,8 +20,8 @@ export const UpdateTask: React.FC<{ task: Task; onUpdate: (task: Task) => void }
       task={props.task}
       btnLabel="Update"
       open={open}
-      setOpen={setOpen}
-      onAction={props.onUpdate}
+      setOpen={setOpen} 
+      onAction={taskCtx.updateTask}
       apiFuntion={api.updateTask}
     >
       <ButtonPrimary onClick={handleOpen} variant="contained" color="primary" startIcon={<EditIcon />}>

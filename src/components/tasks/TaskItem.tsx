@@ -3,7 +3,7 @@ import Card from "@material-ui/core/Card"
 import CardActions from "@material-ui/core/CardActions"
 import CardContent from "@material-ui/core/CardContent"
 import { CustomSpan } from "../../pages/UserProfile"
-import { Button } from "@material-ui/core"
+import { Button, CircularProgress } from "@material-ui/core"
 import { ButtonPrimary } from "../buttons/ButtonPrimary"
 import DeleteIcon from "@material-ui/icons/Delete"
 import EditIcon from "@material-ui/icons/Edit"
@@ -13,14 +13,16 @@ import { UpdateTask } from "./UpdateTask"
 import useAsync from "../../hooks/useAsync"
 import { useAppApiClient } from "../../hooks/useAppApiClient"
 import { useEffect } from "react"
+import { useContext } from "react"
+import TaskContext from "../../contexts/TaskProvider"
 
 export const TaskItem: React.FC<{
   task: Task
-  onUpdate: (task: Task) => void
 }> = (props) => {
   const { task } = props
+  const taskCtx = useContext(TaskContext)
   const api = useAppApiClient()
-  const { run, result } = useAsync(api.updateTask)
+  const { run, result, loading } = useAsync(api.updateTask)
   const changeStatusHandler = () => {
     const completed = !task.completed
     run({
@@ -31,10 +33,11 @@ export const TaskItem: React.FC<{
     })
   }
   useEffect(() => {
-    if (result) props.onUpdate(result)
+    if (result) taskCtx.updateTask(result)
   }, [result])
   return (
     <CustomCard>
+      {loading && <Spinner></Spinner>}
       <CustomCardContent>
         <Description>{task.description}</Description>
         <Status onClick={changeStatusHandler} completed={task.completed}>
@@ -42,7 +45,7 @@ export const TaskItem: React.FC<{
         </Status>
       </CustomCardContent>
       <CardActions>
-        <UpdateTask onUpdate={props.onUpdate} task={task}></UpdateTask>
+        <UpdateTask task={task}></UpdateTask>
         <Button variant="contained" color="secondary" startIcon={<DeleteIcon />}>
           Delete
         </Button>
@@ -50,9 +53,34 @@ export const TaskItem: React.FC<{
     </CustomCard>
   )
 }
+const Spinner = styled(CircularProgress)`
+  position: fixed;
+  z-index: 11;
+  top: 50%;
+  left: 50%;
+`
 const CustomCard = styled(Card)`
   margin: 1rem;
   width: 275px;
+  margin: 1rem;
+  animation: bump 0.3s ease-out;
+  @keyframes bump {
+    0% {
+      transform: scale(1);
+    }
+    10% {
+      transform: scale(0.9);
+    }
+    30% {
+      transform: scale(1.1);
+    }
+    50% {
+      transform: scale(1.15);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
 `
 const CustomCardContent = styled(CardContent)`
   height: 20rem;
