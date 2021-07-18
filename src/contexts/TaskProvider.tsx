@@ -11,10 +11,12 @@ const TaskContext = createContext<{
   tasks: Task[]
   addTask: (newTask: Task) => void
   updateTask: (editedTask: Task) => void
+  deleteTask: (id: string) => void
 }>({
   tasks: [],
   addTask: (newTask: Task) => {},
   updateTask: (editedTask: Task) => {},
+  deleteTask: (id: string) => {},
 })
 
 export const TaskProvider: React.FC = (props) => {
@@ -28,6 +30,9 @@ export const TaskProvider: React.FC = (props) => {
     const taskIdx = tasks.findIndex((task) => task._id == editedTask._id)
     setTasks([...tasks.slice(0, taskIdx), editedTask, ...tasks.slice(taskIdx + 1)])
   }
+  const deleteTask = (id: string) => {
+    setTasks(tasks.filter((task) => task._id != id))
+  }
   useEffect(() => {
     getAllTask.run()
   }, [])
@@ -38,6 +43,7 @@ export const TaskProvider: React.FC = (props) => {
     tasks,
     addTask,
     updateTask,
+    deleteTask,
   }
   return (
     <TaskContext.Provider value={contextValue}>

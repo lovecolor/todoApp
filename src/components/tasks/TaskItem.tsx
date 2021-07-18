@@ -22,10 +22,14 @@ export const TaskItem: React.FC<{
   const { task } = props
   const taskCtx = useContext(TaskContext)
   const api = useAppApiClient()
-  const { run, result, loading } = useAsync(api.updateTask)
+  const updateTask = useAsync(api.updateTask)
+  const deleteTask = useAsync(api.deleteTask)
+  const deleteTaskHandler = () => {
+    deleteTask.run(task._id)
+  }
   const changeStatusHandler = () => {
     const completed = !task.completed
-    run({
+    updateTask.run({
       id: task._id,
       data: {
         completed,
@@ -33,11 +37,15 @@ export const TaskItem: React.FC<{
     })
   }
   useEffect(() => {
-    if (result) taskCtx.updateTask(result)
-  }, [result])
+    if (updateTask.result) taskCtx.updateTask(updateTask.result)
+  }, [updateTask.result])
+  useEffect(() => {
+    if (deleteTask.result) taskCtx.deleteTask(task._id)
+  }, [deleteTask.result])
+
   return (
     <CustomCard>
-      {loading && <Spinner></Spinner>}
+      {(updateTask.loading || deleteTask.loading) && <Spinner></Spinner>}
       <CustomCardContent>
         <Description>{task.description}</Description>
         <Status onClick={changeStatusHandler} completed={task.completed}>
@@ -46,7 +54,7 @@ export const TaskItem: React.FC<{
       </CustomCardContent>
       <CardActions>
         <UpdateTask task={task}></UpdateTask>
-        <Button variant="contained" color="secondary" startIcon={<DeleteIcon />}>
+        <Button onClick={deleteTaskHandler} variant="contained" color="secondary" startIcon={<DeleteIcon />}>
           Delete
         </Button>
       </CardActions>
