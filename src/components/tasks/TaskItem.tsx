@@ -34,6 +34,7 @@ export const TaskItem: React.FC<{
 const CustomCard = styled(Card)`
   margin: 1rem;
   width: 275px;
+  margin: 1rem;
 `
 const CustomCardContent = styled(CardContent)`
   height: 20rem;
