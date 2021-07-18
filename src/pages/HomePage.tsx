@@ -16,13 +16,13 @@ import { NewTask } from "../components/tasks/NewTask"
 const filterTasks = (tasks: Task[], status) => {
   if (status === "All") return tasks
   const isCompleted = status == "Completed"
-  return tasks.filter((task) => task.completed == isCompleted)
+  return tasks.filter((task) => task.completed === isCompleted)
 }
 export const HomePage: React.FC = (props) => {
   const history = useHistory()
   const location = useLocation()
   const queryParams = new URLSearchParams(location.search)
-  const currentStatus = queryParams.get("status")
+  const currentStatus = queryParams.get("status") || "All`"
 
   const [listTask, setListTask] = useState<Task[]>([])
   const filtedTasks: Task[] = filterTasks(listTask, currentStatus)
@@ -88,6 +88,7 @@ const Main = styled.main`
   display: flex;
   flex-wrap: wrap;
 `
+
 const Actions = styled.div`
   width: 100%;
   padding: 1rem;

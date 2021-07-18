@@ -55,6 +55,7 @@ const CustomCard = styled(Card)`
   width: 275px;
 `
 const CustomCardContent = styled(CardContent)`
+  padding: 1rem 8px;
   height: 20rem;
 `
 const Description = styled.div`

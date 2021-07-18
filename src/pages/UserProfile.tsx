@@ -50,7 +50,7 @@ export default function UserProfile() {
     })
   }
   const backHandler = () => {
-    history.push(links.home()) 
+    history.push(links.home())
   }
   const cancelEditHandler = () => {
     setIsEdit(false)
@@ -155,6 +155,7 @@ export const CustomAlert = styled(Alert)`
   left: 1rem;
   z-index: 10;
   width: 50%;
+  min-width: 250px;
   animation-name: smooth;
   animation-duration: 0.5s;
   @keyframes smooth {
