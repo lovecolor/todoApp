@@ -20,7 +20,7 @@ export const UpdateTask: React.FC<{ task: Task }> = (props) => {
       task={props.task}
       btnLabel="Update"
       open={open}
-      setOpen={setOpen} 
+      setOpen={setOpen}
       onAction={taskCtx.updateTask}
       apiFuntion={api.updateTask}
     >

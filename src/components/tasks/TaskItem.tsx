@@ -54,12 +54,13 @@ export const TaskItem: React.FC<{
   )
 }
 const Spinner = styled(CircularProgress)`
-  position: fixed;
+  position: absolute;
   z-index: 11;
-  top: 50%;
-  left: 50%;
+  top: calc(50% - 20px);
+  left: calc(50% - 20px);
 `
 const CustomCard = styled(Card)`
+  position: relative;
   margin: 1rem;
   width: 275px;
   margin: 1rem;
