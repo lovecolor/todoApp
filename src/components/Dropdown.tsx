@@ -41,6 +41,15 @@ const Actions = styled.div`
   position: absolute;
   right: 0;
   padding: 0.5rem 0;
+  animation: smooth 0.3s ease-out;
+  @keyframes smooth {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
 `
 const Action = styled.div`
   cursor: pointer;
