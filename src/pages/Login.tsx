@@ -19,6 +19,7 @@ import { LoginRequest } from "../services/api/types/LoginRequest"
 import { Container } from "@material-ui/core"
 
 export const Login = () => {
+  const [error, setError] = useState<string | null>(null)
   const links = useLinks().common
   const history = useHistory()
   const authCtx = useContext(AuthContext)
@@ -29,9 +30,11 @@ export const Login = () => {
       authCtx.setUser(result.user)
       localStorage.setItem("token", result.token)
       history.push(links.home())
+    } else {
+      setError("Email or password is wrong!")
     }
   })
-  const { error, loading } = login
+  const { loading } = login
   const [formValue, setFormValue] = useState({
     email: "",
     password: "",

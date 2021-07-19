@@ -26,6 +26,7 @@ import { Actions, CustomTextField } from "./Login"
 import { Link } from "react-router-dom"
 
 export default function Register() {
+  const [error, setError] = useState<string | null>(null)
   const history = useHistory()
   const authCtx = useContext(AuthContext)
   const api = useAppApiClient()
@@ -36,9 +37,12 @@ export default function Register() {
       authCtx.setUser(result.user)
       localStorage.setItem("token", result.token)
       history.push(links.home())
+    } else {
+      setError("Email is exist or invalid!")
     }
   })
-  const { loading, error } = signUp
+  const { loading } = signUp
+
   const [formValue, setFormValue] = useState({
     name: "",
     email: "",
@@ -52,6 +56,11 @@ export default function Register() {
   const submitHandler = (e) => {
     e.preventDefault()
     const age = +formValue.age
+    if (formValue.password.length < 8) {
+      setError("Password is short!Minimum is 8!")
+      return
+    }
+
     signUp.run({
       ...formValue,
       age,
