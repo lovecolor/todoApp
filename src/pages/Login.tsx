@@ -23,7 +23,7 @@ export const Login = () => {
   const history = useHistory()
   const authCtx = useContext(AuthContext)
   const api = useAppApiClient()
-  const handleLogin = useAsync(async (data: LoginRequest) => {
+  const login = useAsync(async (data: LoginRequest) => {
     const result = await api.login(data)
     if (result) {
       authCtx.setUser(result.user)
@@ -31,7 +31,7 @@ export const Login = () => {
       history.push(links.home())
     }
   })
-  const { error, loading } = handleLogin
+  const { error, loading } = login
   const [formValue, setFormValue] = useState({
     email: "",
     password: "",
@@ -43,7 +43,7 @@ export const Login = () => {
 
   const submitHandler = (e) => {
     e.preventDefault()
-    handleLogin.run(formValue)
+    login.run(formValue)
   }
 
   return (

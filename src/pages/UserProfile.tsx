@@ -15,17 +15,29 @@ import { useHistory } from "react-router"
 import { useLinks } from "../hooks/useLinks"
 import useAsync from "../hooks/useAsync"
 import { useAppApiClient } from "../hooks/useAppApiClient"
-
+import { SnackbarProvider, VariantType, useSnackbar } from "notistack"
 import { Alert } from "@material-ui/lab"
+import { UpdateUserRequest } from "../services/api/types/UpdateUserRequest"
 
 export default function UserProfile() {
-  const [isShowAlert, setIsShowAler] = useState(false)
+  const { enqueueSnackbar } = useSnackbar()
+
   const history = useHistory()
   const api = useAppApiClient()
   const links = useLinks().common
   const authCtx = useContext(AuthContext)
   const { user } = authCtx
-  const { run, loading, error, result } = useAsync(api.updateUser)
+
+  const { run, loading } = useAsync(async (data: UpdateUserRequest) => {
+    const result = await api.updateUser(data)
+    if (result) {
+      authCtx.setUser(result)
+      setIsEdit(false)
+      enqueueSnackbar("Edit success!", { variant: "success" })
+    } else {
+      enqueueSnackbar("Edit fail!", { variant: "error" })
+    }
+  })
 
   const [isEdit, setIsEdit] = useState(false)
   const [formValue, setFormValue] = useState({
@@ -55,29 +67,9 @@ export default function UserProfile() {
   const cancelEditHandler = () => {
     setIsEdit(false)
   }
-  useEffect(() => {
-    let timeout
-    if (!loading) {
-      if (!error) {
-        setIsEdit(false)
-      }
-      if (result) { 
-        authCtx.setUser(result)
-        setIsShowAler(true)
-        timeout = setTimeout(() => {
-          setIsShowAler(false)
-        }, 2000)
-      }
-    }
-    return () => {
-      if (timeout) clearTimeout(timeout)
-    }
-  }, [loading])
+
   return (
     <MainLayout>
-      {isShowAlert && (
-        <CustomAlert severity={`${error ? "error" : "success"}`}>{error ? error : "Edit Success!"}</CustomAlert>
-      )}
       <CustomButton onClick={backHandler} startIcon={<ArrowBackIosIcon />}>
         Back
       </CustomButton>
@@ -129,7 +121,6 @@ export default function UserProfile() {
             <CustomSpan>{user!.email}</CustomSpan>
           )}
           {loading && <Loading>Loading...</Loading>}
-          {error && <Error>{error}</Error>}
           <Actions>
             {isEdit && (
               <Button onClick={cancelEditHandler} variant="contained">

@@ -30,7 +30,7 @@ export default function Register() {
   const authCtx = useContext(AuthContext)
   const api = useAppApiClient()
   const links = useLinks().common
-  const handleSignUp = useAsync(async (data: RegisterRequest) => {
+  const signUp = useAsync(async (data: RegisterRequest) => {
     const result = await api.register(data)
     if (result) {
       authCtx.setUser(result.user)
@@ -38,7 +38,7 @@ export default function Register() {
       history.push(links.home())
     }
   })
-  const { loading, error } = handleSignUp
+  const { loading, error } = signUp
   const [formValue, setFormValue] = useState({
     name: "",
     email: "",
@@ -52,7 +52,7 @@ export default function Register() {
   const submitHandler = (e) => {
     e.preventDefault()
     const age = +formValue.age
-    handleSignUp.run({
+    signUp.run({
       ...formValue,
       age,
     })

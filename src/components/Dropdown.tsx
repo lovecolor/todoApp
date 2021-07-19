@@ -1,11 +1,14 @@
 import { ClickAwayListener } from "@material-ui/core"
+import { type } from "os"
 import React, { ReactElement } from "react"
 import { useState } from "react"
 import styled from "styled-components"
 
-export const Dropdown: React.FC<{ label: ReactElement; actions: { name: string; handle: (...data: any) => any }[] }> = (
-  props
-) => {
+type Dropdown = {
+  label: ReactElement
+  actions: { name: string; handle: (...data: any) => any }[]
+}
+export const Dropdown: React.FC<Dropdown> = (props) => {
   const [open, setOpen] = useState(false)
   const onClickLabel = () => {
     setOpen(!open)

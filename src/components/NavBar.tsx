@@ -56,7 +56,7 @@ export const NavBar: React.FC = (props) => {
       <AppBar position="static">
         <Toolbar>
           <Grid container alignItems="center">
-            <IconButton edge="start" color="inherit" aria-label="menu">
+            <IconButton edge="start" color="inherit" >
               <MenuIcon />
             </IconButton>
             <Heading6>Todos</Heading6>
@@ -66,9 +66,7 @@ export const NavBar: React.FC = (props) => {
             <Dropdown
               label={
                 <IconButton
-                  aria-label="account of current user"
-                  aria-controls="menu-appbar"
-                  aria-haspopup="true"
+                  
                   color="inherit"
                 >
                   <AccountCircle />

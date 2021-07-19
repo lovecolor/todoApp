@@ -2,8 +2,9 @@ import { AxiosInstance } from "axios"
 import { User } from "./types/User"
 import { LoginRequest } from "./types/LoginRequest"
 import { RegisterRequest } from "./types/RegisterRequest"
-
 import { UpdateUserReponse } from "./types/UpdateUserResponse"
+import { UpdateUserRequest } from "./types/UpdateUserRequest"
+
 
 export const createAppApiClient = (api: AxiosInstance) => {
   return {
@@ -49,15 +50,13 @@ const logout = (api: AxiosInstance) => async (): Promise<LogoutReponse | undefin
 
   return res.data
 }
-export type UpdateUserRequest = {
-  name: string
-  age: number
-  email: string
-}
+
 const updateUser =
   (api: AxiosInstance) =>
   async (data: UpdateUserRequest): Promise<User | undefined> => {
-    const res = await api.put<UpdateUserReponse>("/user/me", data)
+    try {
+      const res = await api.put<UpdateUserReponse>("/user/me", data)
 
-    return res.data.data
+      return res.data.data
+    } catch (error) {}
   }
