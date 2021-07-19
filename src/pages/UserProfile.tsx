@@ -50,7 +50,7 @@ export default function UserProfile() {
     })
   }
   const backHandler = () => {
-    history.goBack()
+    history.push(links.home())
   }
   const cancelEditHandler = () => {
     setIsEdit(false)
@@ -61,8 +61,8 @@ export default function UserProfile() {
       if (!error) {
         setIsEdit(false)
       }
-      if (result) {
-        authCtx.getCurrentUser()
+      if (result) { 
+        authCtx.setUser(result)
         setIsShowAler(true)
         timeout = setTimeout(() => {
           setIsShowAler(false)

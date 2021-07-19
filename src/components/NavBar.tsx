@@ -17,35 +17,40 @@ import { useHistory } from "react-router"
 import { useAppApiClient } from "../hooks/useAppApiClient"
 import useAsync from "../hooks/useAsync"
 import { useLinks } from "../hooks/useLinks"
+import { Dropdown } from "./Dropdown"
+import { Heading6 } from "./text/Heading6"
 
 export const NavBar: React.FC = (props) => {
   const history = useHistory()
   const api = useAppApiClient()
   const links = useLinks().common
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
-  const open = Boolean(anchorEl)
 
   const authCtx = useContext(AuthContext)
   const handleLogout = useAsync(async () => {
     const result = await api.logout()
     if (result) {
-      authCtx.logout()
+      authCtx.setUser(null)
+      localStorage.removeItem("token")
       history.push(links.login())
     }
   })
-  const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget)
-  }
 
-  const handleClose = () => {
-    setAnchorEl(null)
-  }
   const logoutHandler = () => {
-    authCtx.logout()
+    handleLogout.run()
   }
   const profileHandler = () => {
     history.push("/profile")
   }
+  const MenuActions = [
+    {
+      name: "Profile",
+      handle: profileHandler,
+    },
+    {
+      name: "Logout",
+      handle: logoutHandler,
+    },
+  ]
   return (
     <div>
       <AppBar position="static">
@@ -54,36 +59,23 @@ export const NavBar: React.FC = (props) => {
             <IconButton edge="start" color="inherit" aria-label="menu">
               <MenuIcon />
             </IconButton>
-            <Typography variant="h6">Todos</Typography>
+            <Heading6>Todos</Heading6>
           </Grid>
 
           <div>
-            <IconButton
-              aria-label="account of current user"
-              aria-controls="menu-appbar"
-              aria-haspopup="true"
-              onClick={handleMenu}
-              color="inherit"
-            >
-              <AccountCircle />
-            </IconButton>
-            <Menu
-              anchorEl={anchorEl}
-              anchorOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              open={open}
-              onClose={handleClose}
-            >
-              <MenuItem onClick={profileHandler}>Profile</MenuItem>
-              <MenuItem onClick={logoutHandler}>Logout</MenuItem>
-            </Menu>
+            <Dropdown
+              label={
+                <IconButton
+                  aria-label="account of current user"
+                  aria-controls="menu-appbar"
+                  aria-haspopup="true"
+                  color="inherit"
+                >
+                  <AccountCircle />
+                </IconButton>
+              }
+              actions={MenuActions}
+            ></Dropdown>
           </div>
         </Toolbar>
       </AppBar>

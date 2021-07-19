@@ -3,7 +3,7 @@ import { User } from "./types/User"
 import { LoginRequest } from "./types/LoginRequest"
 import { RegisterRequest } from "./types/RegisterRequest"
 
-import { UpdateUserReponse } from "./types/UpdateUserResponse" 
+import { UpdateUserReponse } from "./types/UpdateUserResponse"
 
 export const createAppApiClient = (api: AxiosInstance) => {
   return {
@@ -45,7 +45,7 @@ type LogoutReponse = {
 }
 
 const logout = (api: AxiosInstance) => async (): Promise<LogoutReponse | undefined> => {
-  const res = await api.get<LogoutReponse>("/user/logout")
+  const res = await api.post<LogoutReponse>("/user/logout")
 
   return res.data
 }

@@ -8,7 +8,7 @@ import Typography from "@material-ui/core/Typography"
 
 import { EmptyLayout } from "../layouts/EmptyLayout"
 import AuthContext from "../contexts/AuthProvider"
-import { Error, Loading, CustomAvatar, CustomPaper, CustomForm, CustomButton } from "./Register"
+import { Error, Loading, CustomAvatar, CustomPaper, CustomForm, CustomButton, CustomLink } from "./Register"
 import { TextFieldOutlined } from "../components/textfields/TextFieldOutlined"
 import styled from "styled-components"
 import useAsync from "../hooks/useAsync"
@@ -26,7 +26,8 @@ export const Login = () => {
   const handleLogin = useAsync(async (data: LoginRequest) => {
     const result = await api.login(data)
     if (result) {
-      authCtx.login(result)
+      authCtx.setUser(result.user)
+      localStorage.setItem("token", result.token)
       history.push(links.home())
     }
   })
@@ -84,12 +85,7 @@ export const Login = () => {
             )}
 
             <Actions>
-              <Link href="#" variant="body2">
-                Forgot password?
-              </Link>
-              <Link href="/register" variant="body2">
-                {"Don't have an account? Sign Up"}
-              </Link>
+              <CustomLink to={links.register()}>Don't have an account? Sign Up</CustomLink>
             </Actions>
           </CustomForm>
         </CustomPaper>
