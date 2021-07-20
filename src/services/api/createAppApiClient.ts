@@ -2,9 +2,9 @@ import { AxiosInstance } from "axios"
 import { User } from "./types/User"
 import { LoginRequest } from "./types/LoginRequest"
 import { RegisterRequest } from "./types/RegisterRequest"
-
 import { UpdateUserReponse } from "./types/UpdateUserResponse"
 import { Task } from "./types/Task"
+import { UpdateUserRequest } from "./types/UpdateUserRequest"
 
 export const createAppApiClient = (api: AxiosInstance) => {
   return {
@@ -25,50 +25,58 @@ type LoginResponse = {
 const login =
   (api: AxiosInstance) =>
   async (data: LoginRequest): Promise<LoginResponse | undefined> => {
-    const res = await api.post<LoginResponse>("/user/login", data)
+    try {
+      const res = await api.post<LoginResponse>("/user/login", data)
 
-    return res.data
+      return res.data
+    } catch (error) {}
   }
 
 const register =
   (api: AxiosInstance) =>
   async (data: RegisterRequest): Promise<LoginResponse | undefined> => {
-    const res = await api.post<LoginResponse>("/user/register", data)
+    try {
+      const res = await api.post<LoginResponse>("/user/register", data)
 
-    return res.data
+      return res.data
+    } catch (error) {}
   }
 const getCurrentUser = (api: AxiosInstance) => async (): Promise<User | undefined> => {
-  const res = await api.get<User>("/user/me")
+  try {
+    const res = await api.get<User>("/user/me")
 
-  return res.data
+    return res.data
+  } catch (error) {}
 }
 type LogoutReponse = {
   success: boolean
 }
 
 const logout = (api: AxiosInstance) => async (): Promise<LogoutReponse | undefined> => {
-  const res = await api.get<LogoutReponse>("/user/logout")
+  try {
+    const res = await api.post<LogoutReponse>("/user/logout")
 
-  return res.data
+    return res.data
+  } catch (error) {}
 }
-export type UpdateUserRequest = {
-  name: string
-  age: number
-  email: string
-}
+
 const updateUser =
   (api: AxiosInstance) =>
   async (data: UpdateUserRequest): Promise<User | undefined> => {
-    const res = await api.put<UpdateUserReponse>("/user/me", data)
+    try {
+      const res = await api.put<UpdateUserReponse>("/user/me", data)
 
-    return res.data.data
+      return res.data.data
+    } catch (error) {}
   }
 type AllTaskReponse = {
   count: number
   data: Task[]
 }
 const getAllTask = (api: AxiosInstance) => async (): Promise<Task[] | undefined> => {
-  const res = await api.get<AllTaskReponse>("/task")
+  try {
+    const res = await api.get<AllTaskReponse>("/task")
 
-  return res.data.data
+    return res.data.data
+  } catch (error) {}
 }

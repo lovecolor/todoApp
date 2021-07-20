@@ -9,16 +9,11 @@ import { LoginResponse } from "../services/api/types/LoginResponse"
 const AuthContext = createContext<{
   user: User | null
 
-  login: (data: LoginResponse) => void
-  getCurrentUser: () => void
-  logout: () => void
+  setUser: (user: User | null) => void
 }>({
   user: null,
 
-  login: (data: LoginResponse) => {},
-  getCurrentUser: () => {},
-
-  logout: () => {},
+  setUser: (user: User | null) => {},
 })
 
 export const AuthProvider: React.FC = (props) => {
@@ -35,24 +30,9 @@ export const AuthProvider: React.FC = (props) => {
     }
   })
 
-  const login = (data) => {
-    setUser(data.user)
-
-    localStorage.setItem("token", data.token)
-  }
-
-  const logout = () => {
-    setUser(null)
-
-    localStorage.removeItem("token")
-  }
-
   const contextValue = {
     user,
-
-    getCurrentUser: currentUser.run,
-    login,
-    logout,
+    setUser,
   }
   useEffect(() => {
     const token = localStorage.getItem("token")

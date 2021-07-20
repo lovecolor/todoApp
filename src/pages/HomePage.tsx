@@ -15,7 +15,7 @@ import UserProfile from "./UserProfile"
 export const HomePage: React.FC = (props) => {
   const [listTask, setListTask] = useState([])
   const api = useAppApiClient()
-  const { run, loading, result, error } = useAsync(api.getAllTask)
+  const { run, result } = useAsync(api.getAllTask)
   useEffect(() => {
     run()
   }, [])
@@ -25,14 +25,9 @@ export const HomePage: React.FC = (props) => {
   return (
     <MainLayout>
       <NavBar></NavBar>
-      <Main>
+      <main>
         <TaskList></TaskList>
-      </Main>
+      </main>
     </MainLayout>
   )
 }
-const Main = styled.div`
-  width: 100%;
-  display: flex;
-  flex-wrap: wrap;
-`

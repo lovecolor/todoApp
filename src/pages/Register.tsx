@@ -2,7 +2,7 @@ import Avatar from "@material-ui/core/Avatar"
 import Button from "@material-ui/core/Button"
 import CssBaseline from "@material-ui/core/CssBaseline"
 import TextField from "@material-ui/core/TextField"
-import Link from "@material-ui/core/Link"
+
 import Grid from "@material-ui/core/Grid"
 import Box from "@material-ui/core/Box"
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined"
@@ -23,20 +23,26 @@ import { useLinks } from "../hooks/useLinks"
 import useAsync from "../hooks/useAsync"
 import { useHistory } from "react-router"
 import { Actions, CustomTextField } from "./Login"
+import { Link } from "react-router-dom"
 
 export default function Register() {
+  const [error, setError] = useState<string | null>(null)
   const history = useHistory()
   const authCtx = useContext(AuthContext)
   const api = useAppApiClient()
   const links = useLinks().common
-  const handleSignUp = useAsync(async (data: RegisterRequest) => {
+  const signUp = useAsync(async (data: RegisterRequest) => {
     const result = await api.register(data)
     if (result) {
-      authCtx.login(result)
+      authCtx.setUser(result.user)
+      localStorage.setItem("token", result.token)
       history.push(links.home())
+    } else {
+      setError("Email is exist or invalid!")
     }
   })
-  const { loading, error } = handleSignUp
+  const { loading } = signUp
+
   const [formValue, setFormValue] = useState({
     name: "",
     email: "",
@@ -50,7 +56,12 @@ export default function Register() {
   const submitHandler = (e) => {
     e.preventDefault()
     const age = +formValue.age
-    handleSignUp.run({
+    if (formValue.password.length < 8) {
+      setError("Password is short!Minimum is 8!")
+      return
+    }
+
+    signUp.run({
       ...formValue,
       age,
     })
@@ -118,9 +129,7 @@ export default function Register() {
             )}
 
             <Actions>
-              <Link href="/login" variant="body2">
-                Already have an account? Sign in
-              </Link>
+              <CustomLink to={links.login()}>Already have an account? Sign in</CustomLink>
             </Actions>
           </CustomForm>
         </CustomPaper>
@@ -128,6 +137,16 @@ export default function Register() {
     </EmptyLayout>
   )
 }
+export const CustomLink = styled(Link)`
+  text-decoration: none;
+  color: #3f51b5;
+  font-weight: 400;
+
+  &:hover {
+    text-decoration: underline;
+  }
+`
+
 export const GridContainer = styled.div<{ spacing: number }>`
   display: grid;
 
