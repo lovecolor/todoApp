@@ -13,15 +13,6 @@ import { Error, Loading } from "./Register"
 import UserProfile from "./UserProfile"
 
 export const HomePage: React.FC = (props) => {
-  const [listTask, setListTask] = useState([])
-  const api = useAppApiClient()
-  const { run, result } = useAsync(api.getAllTask)
-  useEffect(() => {
-    run()
-  }, [])
-  useEffect(() => {
-    if (result) setListTask(result)
-  }, [result])
   return (
     <MainLayout>
       <NavBar></NavBar>
