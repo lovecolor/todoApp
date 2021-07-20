@@ -2,7 +2,7 @@ import Avatar from "@material-ui/core/Avatar"
 import Button from "@material-ui/core/Button"
 import CssBaseline from "@material-ui/core/CssBaseline"
 import TextField from "@material-ui/core/TextField"
-import Link from "@material-ui/core/Link"
+
 import Grid from "@material-ui/core/Grid"
 import Box from "@material-ui/core/Box"
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined"
@@ -18,9 +18,30 @@ import { ButtonPrimary } from "../components/buttons/ButtonPrimary"
 import { TextFieldOutlined } from "../components/textfields/TextFieldOutlined"
 import { Paper } from "@material-ui/core"
 import { RegisterRequest } from "../services/api/types/RegisterRequest"
+import { useAppApiClient } from "../hooks/useAppApiClient"
+import { useLinks } from "../hooks/useLinks"
+import useAsync from "../hooks/useAsync"
+import { useHistory } from "react-router"
+import { Actions, CustomTextField } from "./Login"
+import { Link } from "react-router-dom"
 
 export default function Register() {
+  const [error, setError] = useState<string | null>(null)
+  const history = useHistory()
   const authCtx = useContext(AuthContext)
+  const api = useAppApiClient()
+  const links = useLinks().common
+  const signUp = useAsync(async (data: RegisterRequest) => {
+    const result = await api.register(data)
+    if (result) {
+      authCtx.setUser(result.user)
+      localStorage.setItem("token", result.token)
+      history.push(links.home())
+    } else {
+      setError("Email is exist or invalid!")
+    }
+  })
+  const { loading } = signUp
 
   const [formValue, setFormValue] = useState({
     name: "",
@@ -35,7 +56,12 @@ export default function Register() {
   const submitHandler = (e) => {
     e.preventDefault()
     const age = +formValue.age
-    authCtx.signUp({
+    if (formValue.password.length < 8) {
+      setError("Password is short!Minimum is 8!")
+      return
+    }
+
+    signUp.run({
       ...formValue,
       age,
     })
@@ -52,30 +78,27 @@ export default function Register() {
             Sign up
           </Typography>
           <CustomForm onSubmit={submitHandler}>
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
-                <TextFieldOutlined
-                  onChange={changeFormHandler}
-                  autoComplete="name"
-                  name="name"
-                  required
-                  fullWidth
-                  label="Name"
-                  autoFocus
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextFieldOutlined
-                  onChange={changeFormHandler}
-                  type="number"
-                  required
-                  fullWidth
-                  label="Age"
-                  name="age"
-                  autoComplete="age"
-                />
-              </Grid>
-              <Grid item xs={12}>
+            <GridContainer spacing={3}>
+              <TextFieldOutlined
+                onChange={changeFormHandler}
+                autoComplete="name"
+                name="name"
+                required
+                fullWidth
+                label="Name"
+                autoFocus
+              />
+              <TextFieldOutlined
+                onChange={changeFormHandler}
+                type="number"
+                required
+                fullWidth
+                label="Age"
+                name="age"
+                autoComplete="age"
+              />
+
+              <GridItem span={2}>
                 <TextFieldOutlined
                   onChange={changeFormHandler}
                   required
@@ -84,8 +107,8 @@ export default function Register() {
                   name="email"
                   autoComplete="email"
                 />
-              </Grid>
-              <Grid item xs={12}>
+              </GridItem>
+              <GridItem span={2}>
                 <TextFieldOutlined
                   onChange={changeFormHandler}
                   required
@@ -95,29 +118,43 @@ export default function Register() {
                   type="password"
                   autoComplete="current-password"
                 />
-              </Grid>
-            </Grid>
-            {authCtx.error && <Error>{authCtx.error}</Error>}
-            {authCtx.loading && <Loading>Loading...</Loading>}
-            {!authCtx.loading && (
+              </GridItem>
+            </GridContainer>
+            {error && <Error>{error}</Error>}
+            {loading && <Loading>Loading...</Loading>}
+            {!loading && (
               <CustomButton type="submit" fullWidth>
                 Sign Up
               </CustomButton>
             )}
 
-            <Grid container justifyContent="flex-end">
-              <Grid item>
-                <Link href="/login" variant="body2">
-                  Already have an account? Sign in
-                </Link>
-              </Grid>
-            </Grid>
+            <Actions>
+              <CustomLink to={links.login()}>Already have an account? Sign in</CustomLink>
+            </Actions>
           </CustomForm>
         </CustomPaper>
       </Container>
     </EmptyLayout>
   )
 }
+export const CustomLink = styled(Link)`
+  text-decoration: none;
+  color: #3f51b5;
+  font-weight: 400;
+
+  &:hover {
+    text-decoration: underline;
+  }
+`
+
+export const GridContainer = styled.div<{ spacing: number }>`
+  display: grid;
+
+  grid-gap: ${(props) => `${props.spacing * 8}px`};
+`
+export const GridItem = styled.div<{ span: number }>`
+  grid-column: 1 / span ${(props) => `${props.span}`};
+`
 export const CustomButton = styled(ButtonPrimary)`
   margin: 1rem 0;
 `
@@ -133,7 +170,7 @@ export const CustomAvatar = styled(Avatar)`
   background-color: #f50057;
 `
 export const CustomForm = styled.form`
-  width: "100%";
+  width: 100%;
   margin-top: 1rem;
 `
 export const Error = styled.p`
