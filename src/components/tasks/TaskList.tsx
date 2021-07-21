@@ -17,16 +17,6 @@ export const TaskList: React.FC = (props) => {
 }
 const Root = styled.div`
   width: 100%;
-  display: grid;
-  padding: 1rem;
-  grid-row-gap: 1rem;
-  justify-content: space-between;
-  grid-template-columns: ${() => {
-    let column = ""
-    for (let i = 0; i < Math.floor(window.innerWidth / 275); i++) {
-      column += "auto "
-    }
-    console.log(window.innerWidth)
-    return column
-  }};
+  display: flex;
+  flex-wrap: wrap;
 `
