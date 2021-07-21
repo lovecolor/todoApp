@@ -8,7 +8,7 @@ import { useContext } from "react"
 import AuthContext from "../contexts/AuthProvider"
 import { useState } from "react"
 import { ButtonPrimary } from "../components/buttons/ButtonPrimary"
-import { GridContainer, Loading } from "./Register"
+
 import { useHistory } from "react-router"
 import { useLinks } from "../hooks/useLinks"
 import useAsync from "../hooks/useAsync"
@@ -16,6 +16,8 @@ import { useAppApiClient } from "../hooks/useAppApiClient"
 import { useSnackbar } from "notistack"
 import { Alert } from "@material-ui/lab"
 import { UpdateUserRequest } from "../services/api/types/UpdateUserRequest"
+import { Loading } from "../components/text/Loading"
+import { GridContainer } from "../components/UI/GridContainer"
 
 export default function UserProfile() {
   const { enqueueSnackbar } = useSnackbar()

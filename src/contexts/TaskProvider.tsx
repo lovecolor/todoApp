@@ -2,9 +2,11 @@ import { useEffect } from "react"
 import { useState } from "react"
 import { createContext } from "react"
 import styled from "styled-components"
+import { Error } from "../components/text/Error"
+import { Loading } from "../components/text/Loading"
 import { useAppApiClient } from "../hooks/useAppApiClient"
 import useAsync from "../hooks/useAsync"
-import { Error, Loading } from "../pages/Register"
+// import { Error, Loading } from "../pages/Register"
 import { Task } from "../services/api/types/Task"
 
 const TaskContext = createContext<{

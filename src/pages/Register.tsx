@@ -1,10 +1,5 @@
 import Avatar from "@material-ui/core/Avatar"
-import Button from "@material-ui/core/Button"
-import CssBaseline from "@material-ui/core/CssBaseline"
-import TextField from "@material-ui/core/TextField"
 
-import Grid from "@material-ui/core/Grid"
-import Box from "@material-ui/core/Box"
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined"
 import Typography from "@material-ui/core/Typography"
 import { makeStyles } from "@material-ui/core/styles"
@@ -24,6 +19,9 @@ import useAsync from "../hooks/useAsync"
 import { useHistory } from "react-router"
 import { Actions, CustomTextField } from "./Login"
 import { Link } from "react-router-dom"
+import { Error } from "../components/text/Error"
+import { Loading } from "../components/text/Loading"
+import { GridContainer } from "../components/UI/GridContainer"
 
 export default function Register() {
   const [error, setError] = useState<string | null>(null)
@@ -147,11 +145,7 @@ export const CustomLink = styled(Link)`
   }
 `
 
-export const GridContainer = styled.div<{ spacing: number }>`
-  display: grid;
 
-  grid-gap: ${(props) => `${props.spacing * 8}px`};
-`
 export const GridItem = styled.div<{ span: number }>`
   grid-column: 1 / span ${(props) => `${props.span}`};
 `
@@ -172,13 +166,4 @@ export const CustomAvatar = styled(Avatar)`
 export const CustomForm = styled.form`
   width: 100%;
   margin-top: 1rem;
-`
-export const Error = styled.p`
-  width: 100%;
-  text-align: center;
-  color: red;
-`
-export const Loading = styled.p`
-  width: 100%;
-  text-align: center;
 `

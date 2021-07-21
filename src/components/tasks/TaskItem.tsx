@@ -9,9 +9,10 @@ import EditIcon from "@material-ui/icons/Edit"
 import styled from "styled-components"
 import { Task } from "../../services/api/types/Task"
 
-export const TaskItem: React.FC<{
+export type TaskItemProps = {
   task: Task
-}> = (props) => {
+}
+export const TaskItem = (props: TaskItemProps) => {
   const { task } = props
   return (
     <CustomCard>
