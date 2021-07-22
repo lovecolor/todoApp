@@ -21,7 +21,7 @@ import { Actions, CustomTextField } from "./Login"
 import { Link } from "react-router-dom"
 import { Error } from "../components/text/Error"
 import { Loading } from "../components/text/Loading"
-import { GridContainer } from "../components/UI/GridContainer"
+import { GridContainer } from "../components/Grid/GridContainer"
 
 export default function Register() {
   const [error, setError] = useState<string | null>(null)

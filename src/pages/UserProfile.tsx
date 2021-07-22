@@ -17,7 +17,7 @@ import { useSnackbar } from "notistack"
 import { Alert } from "@material-ui/lab"
 import { UpdateUserRequest } from "../services/api/types/UpdateUserRequest"
 import { Loading } from "../components/text/Loading"
-import { GridContainer } from "../components/UI/GridContainer"
+import { GridContainer } from "../components/Grid/GridContainer"
 
 export default function UserProfile() {
   const { enqueueSnackbar } = useSnackbar()

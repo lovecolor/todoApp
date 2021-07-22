@@ -6,7 +6,6 @@ import { Error } from "../components/text/Error"
 import { Loading } from "../components/text/Loading"
 import { useAppApiClient } from "../hooks/useAppApiClient"
 import useAsync from "../hooks/useAsync"
-// import { Error, Loading } from "../pages/Register"
 import { Task } from "../services/api/types/Task"
 
 const TaskContext = createContext<{
@@ -18,10 +17,8 @@ const TaskContext = createContext<{
 export const TaskProvider: React.FC = (props) => {
   const [tasks, setTasks] = useState([])
   const api = useAppApiClient()
-  const getAllTask = useAsync(api.getAllTask)
-  useEffect(() => {
-    getAllTask.run()
-  }, [])
+  const getAllTask = useAsync(api.getAllTask, true)
+
   useEffect(() => {
     if (getAllTask.result) setTasks(getAllTask.result)
   }, [getAllTask.result])
