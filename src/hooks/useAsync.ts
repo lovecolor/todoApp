@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from "react"
 
-const useAsync = (asyncFuntion: (...data: any) => any, isRun = false) => {
+const useAsync = (asyncFuntion: (...data: any) => any, immediate = false) => {
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
   const [result, setResult] = useState<any>(null)
@@ -21,7 +21,7 @@ const useAsync = (asyncFuntion: (...data: any) => any, isRun = false) => {
     [asyncFuntion]
   )
   useEffect(() => {
-    isRun && run()
+    immediate && run()
   }, [])
   return {
     run,

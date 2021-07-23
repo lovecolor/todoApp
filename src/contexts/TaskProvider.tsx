@@ -10,8 +10,10 @@ import { Task } from "../services/api/types/Task"
 
 const TaskContext = createContext<{
   tasks: Task[]
+  loading: boolean
 }>({
   tasks: [],
+  loading: false,
 })
 
 export const TaskProvider: React.FC = (props) => {
@@ -24,11 +26,12 @@ export const TaskProvider: React.FC = (props) => {
   }, [getAllTask.result])
   const contextValue = {
     tasks,
+    loading: getAllTask.loading,
   }
   return (
     <TaskContext.Provider value={contextValue}>
       {props.children}
-      {getAllTask.loading && <Loading>Loading...</Loading>}
+
       {getAllTask.error && <Error>{getAllTask.error}</Error>}
       {!getAllTask.loading && tasks.length == 0 && <NoResult>Without any task</NoResult>}
     </TaskContext.Provider>
