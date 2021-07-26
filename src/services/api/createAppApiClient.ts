@@ -3,6 +3,7 @@ import { User } from "./types/User"
 import { LoginRequest } from "./types/LoginRequest"
 import { RegisterRequest } from "./types/RegisterRequest"
 import { UpdateUserReponse } from "./types/UpdateUserResponse"
+import { Task } from "./types/Task"
 import { UpdateUserRequest } from "./types/UpdateUserRequest"
 
 export const createAppApiClient = (api: AxiosInstance) => {
@@ -12,6 +13,7 @@ export const createAppApiClient = (api: AxiosInstance) => {
     getCurrentUser: getCurrentUser(api),
     logout: logout(api),
     updateUser: updateUser(api),
+    getAllTask: getAllTask(api),
   }
 }
 
@@ -67,3 +69,14 @@ const updateUser =
       return res.data.data
     } catch (error) {}
   }
+type AllTaskReponse = {
+  count: number
+  data: Task[]
+}
+const getAllTask = (api: AxiosInstance) => async (): Promise<Task[] | undefined> => {
+  try {
+    const res = await api.get<AllTaskReponse>("/task")
+
+    return res.data.data
+  } catch (error) {}
+}

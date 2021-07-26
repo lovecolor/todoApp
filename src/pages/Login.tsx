@@ -8,7 +8,7 @@ import Typography from "@material-ui/core/Typography"
 
 import { EmptyLayout } from "../layouts/EmptyLayout"
 import AuthContext from "../contexts/AuthProvider"
-import { Error, Loading, CustomAvatar, CustomPaper, CustomForm, CustomButton, CustomLink } from "./Register"
+import { CustomAvatar, CustomPaper, CustomForm, CustomButton, CustomLink } from "./Register"
 import { TextFieldOutlined } from "../components/textfields/TextFieldOutlined"
 import styled from "styled-components"
 import useAsync from "../hooks/useAsync"
@@ -17,6 +17,8 @@ import { useHistory } from "react-router"
 import { useLinks } from "../hooks/useLinks"
 import { LoginRequest } from "../services/api/types/LoginRequest"
 import { Container } from "@material-ui/core"
+import { Error } from "../components/text/Error"
+import { Loading } from "../components/text/Loading"
 
 export const Login = () => {
   const [error, setError] = useState<string | null>(null)

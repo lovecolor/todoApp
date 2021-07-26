@@ -2,22 +2,22 @@ import { Button, Paper, Typography } from "@material-ui/core"
 import React from "react"
 import styled from "styled-components"
 import { MainLayout } from "../layouts/MainLayout"
-import Grid from "@material-ui/core/Grid"
 import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos"
 import TextField from "@material-ui/core/TextField"
 import { useContext } from "react"
 import AuthContext from "../contexts/AuthProvider"
 import { useState } from "react"
 import { ButtonPrimary } from "../components/buttons/ButtonPrimary"
-import { useEffect } from "react"
-import { Error, GridContainer, Loading } from "./Register"
+
 import { useHistory } from "react-router"
 import { useLinks } from "../hooks/useLinks"
 import useAsync from "../hooks/useAsync"
 import { useAppApiClient } from "../hooks/useAppApiClient"
-import { SnackbarProvider, VariantType, useSnackbar } from "notistack"
+import { useSnackbar } from "notistack"
 import { Alert } from "@material-ui/lab"
 import { UpdateUserRequest } from "../services/api/types/UpdateUserRequest"
+import { Loading } from "../components/text/Loading"
+import { GridContainer } from "../components/Grid/GridContainer"
 
 export default function UserProfile() {
   const { enqueueSnackbar } = useSnackbar()
@@ -137,23 +137,6 @@ export default function UserProfile() {
 const CustomSpan = styled.span`
   font-size: 1.3rem;
   text-align: center;
-`
-const CustomAlert = styled(Alert)`
-  position: fixed;
-  top: 1rem;
-  left: 1rem;
-  z-index: 10;
-  width: 50%;
-  animation-name: smooth;
-  animation-duration: 0.5s;
-  @keyframes smooth {
-    from {
-      left: -50%;
-    }
-    to {
-      left: 1rem;
-    }
-  }
 `
 const CustomButton = styled(ButtonPrimary)`
   margin: 1rem;

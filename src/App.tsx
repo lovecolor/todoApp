@@ -6,8 +6,10 @@ import { Login } from "./pages/Login"
 import { HomePage } from "./pages/HomePage"
 import { useContext } from "react"
 import AuthContext from "./contexts/AuthProvider"
-import Register, { Loading } from "./pages/Register"
+import Register from "./pages/Register"
 import UserProfile from "./pages/UserProfile"
+import { TaskProvider } from "./contexts/TaskProvider"
+import { Loading } from "./components/text/Loading"
 
 export const App = () => {
   const links = useLinks().common
@@ -27,7 +29,9 @@ export const App = () => {
                 ) : (
                   <>
                     {!isLoggedIn && <Redirect to={links.login()}></Redirect>}
-                    <HomePage></HomePage>
+                    <TaskProvider>
+                      <HomePage></HomePage>
+                    </TaskProvider>
                   </>
                 )}
               </Route>
@@ -54,7 +58,6 @@ export const App = () => {
                 <Redirect to={links.home()}></Redirect>
               </Route>
             </Switch>
-            
           </CssBaseline>
         </StylesProvider>
       </SnackbarProvider>
