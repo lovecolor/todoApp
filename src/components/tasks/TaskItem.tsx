@@ -2,7 +2,6 @@ import React from "react"
 import Card from "@material-ui/core/Card"
 import CardActions from "@material-ui/core/CardActions"
 import CardContent from "@material-ui/core/CardContent"
-import { CustomSpan } from "../../pages/UserProfile"
 import { Button } from "@material-ui/core"
 import { ButtonPrimary } from "../buttons/ButtonPrimary"
 import DeleteIcon from "@material-ui/icons/Delete"
@@ -10,9 +9,10 @@ import EditIcon from "@material-ui/icons/Edit"
 import styled from "styled-components"
 import { Task } from "../../services/api/types/Task"
 
-export const TaskItem: React.FC<{
+export type TaskItemProps = {
   task: Task
-}> = (props) => {
+}
+export const TaskItem = (props: TaskItemProps) => {
   const { task } = props
   return (
     <CustomCard>
@@ -21,7 +21,7 @@ export const TaskItem: React.FC<{
         <Status completed={task.completed}>Completed</Status>
       </CustomCardContent>
       <CardActions>
-        <ButtonPrimary variant="contained" color="primary" startIcon={<EditIcon />}>
+        <ButtonPrimary variant="contained" startIcon={<EditIcon />}>
           Edit
         </ButtonPrimary>
         <Button variant="contained" color="secondary" startIcon={<DeleteIcon />}>

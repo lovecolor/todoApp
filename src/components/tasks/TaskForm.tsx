@@ -1,35 +1,46 @@
-import React from "react"
+import React, { ReactElement } from "react"
 import Modal from "@material-ui/core/Modal"
 import Backdrop from "@material-ui/core/Backdrop"
-import { Button, Fab, Paper } from "@material-ui/core"
-import AddIcon from "@material-ui/icons/Add"
+import { Button, Paper } from "@material-ui/core"
 import { useState } from "react"
 import styled from "styled-components"
 import { TextFieldOutlined } from "../textfields/TextFieldOutlined"
-import { ButtonPrimary } from "../buttons/ButtonPrimary"
-import { CustomAlert, CustomButton } from "../../pages/UserProfile"
-import { useAppApiClient } from "../../hooks/useAppApiClient"
-import useAsync from "../../hooks/useAsync"
 import { useEffect } from "react"
-import { Error, Loading } from "../../pages/Register"
 import { Task } from "../../services/api/types/Task"
+import { Loading } from "../text/Loading"
+import { Error } from "../text/Error"
+import useAsync from "../../hooks/useAsync"
+import { ButtonPrimary } from "../buttons/ButtonPrimary"
+import { useSnackbar } from "notistack"
 
-export const TaskForm: React.FC<{
+export type TaskFormProps = {
   task?: Task
-  btnLabel: string
-  onAction: (...data: any) => void
+  submitLabel: string
+  onAction: (task: Task) => void
   apiFuntion: (...data: any) => any
-  open: boolean
-  setOpen: (data: boolean) => void
-}> = (props) => {
-  const { apiFuntion, open, setOpen, btnLabel } = props
-  const { run, loading, result, error } = useAsync(apiFuntion)
+  label: ReactElement
+}
+export const TaskForm = (props: TaskFormProps) => {
+  const { enqueueSnackbar } = useSnackbar()
+  const { apiFuntion, submitLabel } = props
+  const { run, loading, result, error } = useAsync(async (data) => {
+    const result = await apiFuntion(data)
+    if (result) {
+      props.onAction(result)
+      setOpen(false)
+      enqueueSnackbar(`${submitLabel} success!`, { variant: "success" })
+    } else {
+      enqueueSnackbar(`${submitLabel} fail!`, { variant: "error" })
+    }
+  })
   const [description, setDescription] = useState(props.task?.description || "")
   const changeDescriptionHanndler = (e) => {
     setDescription(e.target.value)
   }
-  const [isShowAlert, setIsShowAlert] = useState(false)
-
+  const [open, setOpen] = useState(false)
+  const handleOpen = () => {
+    setOpen(true)
+  }
   const handleClose = () => {
     setOpen(false)
   }
@@ -50,33 +61,10 @@ export const TaskForm: React.FC<{
       run(requestData)
     }
   }
-  useEffect(() => {
-    let timeout
-    if (!loading) {
-      if (result || error) {
-        setIsShowAlert(true)
-        timeout = setTimeout(() => {
-          setIsShowAlert(false)
-        }, 2000)
-      }
-      if (result) {
-        props.onAction(result)
-        handleClose()
-      }
-    }
-    return () => {
-      if (timeout) clearTimeout(timeout)
-    }
-  }, [loading])
 
   return (
     <div>
-      {isShowAlert && (
-        <CustomAlert severity={`${error ? "error" : "success"}`}>
-          {error ? error : `${btnLabel} Task Success!`}
-        </CustomAlert>
-      )}
-      {props.children}
+      <div onClick={handleOpen}>{props.label}</div>
       <Modal
         aria-labelledby="transition-modal-title"
         aria-describedby="transition-modal-description"
@@ -103,7 +91,7 @@ export const TaskForm: React.FC<{
             {error && <Error>{error}</Error>}
             {!loading && (
               <Actions>
-                <CustomButton type="submit">{btnLabel}</CustomButton>
+                <CustomButton type="submit">{submitLabel}</CustomButton>
                 <Button onClick={handleClose} variant="contained">
                   Cancel
                 </Button>
@@ -122,7 +110,11 @@ const CustomPaper = styled(Paper)`
   padding: 1rem;
 `
 const Actions = styled.div`
+  margin-top: 1rem;
   display: flex;
   align-items: center;
   justify-content: flex-end;
+`
+const CustomButton = styled(ButtonPrimary)`
+  margin-right: 1rem;
 `
