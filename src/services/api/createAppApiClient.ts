@@ -85,13 +85,16 @@ type AddTaskReponse = {
   success: boolean
   data: Task
 }
+type AddTaskRequest = {
+  description: string
+  completed?: boolean
+}
 const addTask =
   (api: AxiosInstance) =>
-  async (description: string): Promise<Task | undefined> => {
+  async (data: AddTaskRequest): Promise<Task | undefined> => {
     try {
-      const res = await api.post<AddTaskReponse>("/task", { description })
+      const res = await api.post<AddTaskReponse>("/task", data)
 
       return res.data.data
     } catch (error) {}
   }
- 

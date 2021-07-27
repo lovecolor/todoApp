@@ -13,12 +13,8 @@ import { useAppApiClient } from "../hooks/useAppApiClient"
 import useAsync from "../hooks/useAsync"
 
 export const HomePage: React.FC = (props) => {
-  const [listTask, setListTask] = useState<Task[]>([])
-  const api = useAppApiClient()
-  
   const taskCtx = useContext(TaskContext)
 
- 
   return (
     <MainLayout>
       <NavBar></NavBar>

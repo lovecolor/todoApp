@@ -26,10 +26,6 @@ export const TaskProvider: React.FC = (props) => {
     setTasks([...tasks, newTask])
   }
   useEffect(() => {
-    getAllTask.run()
-  }, [])
-
-  useEffect(() => {
     if (getAllTask.result) setTasks(getAllTask.result)
   }, [getAllTask.result])
   const contextValue = {

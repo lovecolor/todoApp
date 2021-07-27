@@ -1,7 +1,7 @@
 import React, { ReactElement } from "react"
 import Modal from "@material-ui/core/Modal"
 import Backdrop from "@material-ui/core/Backdrop"
-import { Button, Paper } from "@material-ui/core"
+import { Button, FormControlLabel, Paper } from "@material-ui/core"
 import { useState } from "react"
 import styled from "styled-components"
 import { TextFieldOutlined } from "../textfields/TextFieldOutlined"
@@ -12,30 +12,31 @@ import { Error } from "../text/Error"
 import useAsync from "../../hooks/useAsync"
 import { ButtonPrimary } from "../buttons/ButtonPrimary"
 import { useSnackbar } from "notistack"
+import Checkbox, { CheckboxProps } from "@material-ui/core/Checkbox"
 
 export type TaskFormProps = {
   task?: Task
   submitLabel: string
-  onAction: (task: Task) => void
+
   apiFuntion: (...data: any) => any
   label: ReactElement
 }
 export const TaskForm = (props: TaskFormProps) => {
   const { enqueueSnackbar } = useSnackbar()
   const { apiFuntion, submitLabel } = props
-  const { run, loading, result, error } = useAsync(async (data) => {
-    const result = await apiFuntion(data)
-    if (result) {
-      props.onAction(result)
-      setOpen(false)
-      enqueueSnackbar(`${submitLabel} success!`, { variant: "success" })
-    } else {
-      enqueueSnackbar(`${submitLabel} fail!`, { variant: "error" })
-    }
+  const { run, loading, error } = useAsync(async (data) => {
+    try {
+      await apiFuntion(data)
+      handleClose()
+    } catch (error) {}
   })
   const [description, setDescription] = useState(props.task?.description || "")
+  const [completed, setCompleted] = useState(props.task?.completed || false)
   const changeDescriptionHanndler = (e) => {
     setDescription(e.target.value)
+  }
+  const changeStatusHandler = (e) => {
+    setCompleted(e.target.checked)
   }
   const [open, setOpen] = useState(false)
   const handleOpen = () => {
@@ -48,18 +49,15 @@ export const TaskForm = (props: TaskFormProps) => {
   const submitHandler = (e) => {
     e.preventDefault()
     const value = description.trim()
-    if (value.length > 0) {
-      let requestData
-      if (props.task) {
-        requestData = {
-          id: props.task._id,
-          data: {
-            description: value,
-          },
-        }
-      } else requestData = value
-      run(requestData)
+    if (value.length === 0) return
+
+    const data = {
+      description: value,
+      completed,
     }
+    const requestData = props.task ? { id: props.task._id, data } : data
+
+    run(requestData)
   }
 
   return (
@@ -87,6 +85,10 @@ export const TaskForm = (props: TaskFormProps) => {
               fullWidth
               rows={4}
             ></TextFieldOutlined>
+            <FormControlLabel
+              control={<StatusCheckbox checked={completed} onChange={changeStatusHandler} name="completed" />}
+              label="Completed"
+            />
             {loading && <Loading>Loading...</Loading>}
             {error && <Error>{error}</Error>}
             {!loading && (
@@ -117,4 +119,7 @@ const Actions = styled.div`
 `
 const CustomButton = styled(ButtonPrimary)`
   margin-right: 1rem;
+`
+const StatusCheckbox = styled(Checkbox).attrs((props) => ({ ...props, color: "default" }))`
+  color: green;
 `
