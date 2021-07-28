@@ -9,19 +9,9 @@ import TaskContext from "../../contexts/TaskProvider"
 import { useSnackbar } from "notistack"
 
 export const NewTask = () => {
-  const { enqueueSnackbar } = useSnackbar()
   const taskCtx = useContext(TaskContext)
   const api = useAppApiClient()
-  const handleSubmit = async (data) => {
-    const result = await api.addTask(data)
-    if (result) {
-      taskCtx.addTask(result)
-      enqueueSnackbar(`Add success!`, { variant: "success" })
-    } else {
-      enqueueSnackbar(`Add failure!`, { variant: "error" })
-      throw new Error("Add failure!")
-    }
-  }
+
   return (
     <TaskForm
       label={
@@ -30,7 +20,8 @@ export const NewTask = () => {
         </CustomFloatBtn>
       }
       submitLabel="Add"
-      apiFuntion={handleSubmit}
+      onAction={taskCtx.addTask}
+      apiFuntion={api.addTask}
     ></TaskForm>
   )
 }

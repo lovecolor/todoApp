@@ -17,18 +17,29 @@ import Checkbox, { CheckboxProps } from "@material-ui/core/Checkbox"
 export type TaskFormProps = {
   task?: Task
   submitLabel: string
-
+  onAction: (task: Task) => void
   apiFuntion: (...data: any) => any
   label: ReactElement
 }
 export const TaskForm = (props: TaskFormProps) => {
   const { enqueueSnackbar } = useSnackbar()
-  const { apiFuntion, submitLabel } = props
+  const { apiFuntion, submitLabel, onAction } = props
+  const [open, setOpen] = useState(false)
+  const handleOpen = () => {
+    setOpen(true)
+  }
+  const handleClose = () => {
+    setOpen(false)
+  }
   const { run, loading, error } = useAsync(async (data) => {
-    try {
-      await apiFuntion(data)
+    const result = await apiFuntion(data)
+    if (result) {
+      enqueueSnackbar(`${submitLabel} success!`, { variant: "success" })
+      onAction(result)
       handleClose()
-    } catch (error) {}
+    } else {  
+      enqueueSnackbar(`${submitLabel} failure!`, { variant: "error" })
+    }
   })
   const [description, setDescription] = useState(props.task?.description || "")
   const [completed, setCompleted] = useState(props.task?.completed || false)
@@ -37,13 +48,6 @@ export const TaskForm = (props: TaskFormProps) => {
   }
   const changeStatusHandler = (e) => {
     setCompleted(e.target.checked)
-  }
-  const [open, setOpen] = useState(false)
-  const handleOpen = () => {
-    setOpen(true)
-  }
-  const handleClose = () => {
-    setOpen(false)
   }
 
   const submitHandler = (e) => {
