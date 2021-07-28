@@ -13,7 +13,7 @@ export const createAppApiClient = (api: AxiosInstance) => {
     getCurrentUser: getCurrentUser(api),
     logout: logout(api),
     updateUser: updateUser(api),
-    getAllTask: getAllTask(api),
+    getAllTasks: getAllTasks(api),
     addTask: addTask(api),
   }
 }
@@ -74,7 +74,7 @@ type AllTaskReponse = {
   count: number
   data: Task[]
 }
-const getAllTask = (api: AxiosInstance) => async (): Promise<Task[] | undefined> => {
+const getAllTasks = (api: AxiosInstance) => async (): Promise<Task[] | undefined> => {
   try {
     const res = await api.get<AllTaskReponse>("/task")
 
