@@ -32,6 +32,7 @@ export const TaskItem = (props: TaskItemProps) => {
   )
 }
 const CustomCard = styled(Card)`
+  margin: 1rem;
   width: 275px;
   margin: 1rem;
 `

@@ -8,7 +8,7 @@ import Typography from "@material-ui/core/Typography"
 
 import { EmptyLayout } from "../layouts/EmptyLayout"
 import AuthContext from "../contexts/AuthProvider"
-import { CustomAvatar, CustomPaper, CustomForm, CustomButton, CustomLink } from "./Register"
+import { CustomAvatar, CustomPaper, CustomForm, CustomLink } from "./Register"
 import { TextFieldOutlined } from "../components/textfields/TextFieldOutlined"
 import styled from "styled-components"
 import useAsync from "../hooks/useAsync"
@@ -19,6 +19,7 @@ import { LoginRequest } from "../services/api/types/LoginRequest"
 import { Container } from "@material-ui/core"
 import { Error } from "../components/text/Error"
 import { Loading } from "../components/text/Loading"
+import { ButtonPrimary } from "../components/buttons/ButtonPrimary"
 
 export const Login = () => {
   const [error, setError] = useState<string | null>(null)
@@ -105,4 +106,7 @@ export const CustomTextField = styled(TextFieldOutlined)`
 export const Actions = styled.div`
   display: flex;
   justify-content: space-between;
+`
+const CustomButton = styled(ButtonPrimary)`
+  margin: 1rem 0;
 `

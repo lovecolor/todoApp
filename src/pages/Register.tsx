@@ -145,11 +145,10 @@ export const CustomLink = styled(Link)`
   }
 `
 
-
-export const GridItem = styled.div<{ span: number }>`
+const GridItem = styled.div<{ span: number }>`
   grid-column: 1 / span ${(props) => `${props.span}`};
 `
-export const CustomButton = styled(ButtonPrimary)`
+const CustomButton = styled(ButtonPrimary)`
   margin: 1rem 0;
 `
 export const CustomPaper = styled(Paper)`

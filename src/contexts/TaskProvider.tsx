@@ -11,29 +11,34 @@ import { Task } from "../services/api/types/Task"
 const TaskContext = createContext<{
   tasks: Task[]
   loading: boolean
+  addTask: (newTask: Task) => void
 }>({
   tasks: [],
+  addTask: (newTask: Task) => {},
   loading: false,
 })
-
 export const TaskProvider: React.FC = (props) => {
-  const [tasks, setTasks] = useState([])
+  const [tasks, setTasks] = useState<Task[]>([])
   const api = useAppApiClient()
-  const getAllTask = useAsync(api.getAllTask, true)
 
+  const getAllTasks = useAsync(api.getAllTasks, true)
+  const addTask = (newTask: Task) => {
+    setTasks([...tasks, newTask])
+  }
   useEffect(() => {
-    if (getAllTask.result) setTasks(getAllTask.result)
-  }, [getAllTask.result])
+    if (getAllTasks.result) setTasks(getAllTasks.result)
+  }, [getAllTasks.result])
   const contextValue = {
     tasks,
-    loading: getAllTask.loading,
+    addTask,
+    loading: getAllTasks.loading,
   }
   return (
     <TaskContext.Provider value={contextValue}>
       {props.children}
 
-      {getAllTask.error && <Error>{getAllTask.error}</Error>}
-      {!getAllTask.loading && tasks.length == 0 && <NoResult>Without any task</NoResult>}
+      {getAllTasks.error && <Error>{getAllTasks.error}</Error>}
+      {!getAllTasks.loading && tasks.length == 0 && <NoResult>Without any task</NoResult>}
     </TaskContext.Provider>
   )
 }
