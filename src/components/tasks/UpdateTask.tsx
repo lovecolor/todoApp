@@ -8,25 +8,12 @@ import { Task } from "../../services/api/types/Task"
 import { useContext } from "react"
 import TaskContext from "../../contexts/TaskProvider"
 
-export const UpdateTask: React.FC<{ task: Task }> = (props) => {
+export type UpdateTaskProps = {
+  id: number
+}
+export const UpdateTask = (props: UpdateTaskProps) => {
   const taskCtx = useContext(TaskContext)
-  const api = useAppApiClient()
-  const [open, setOpen] = useState(false)
-  const handleOpen = () => {
-    setOpen(true)
-  }
-  return (
-    <TaskForm
-      task={props.task}
-      btnLabel="Update"
-      open={open}
-      setOpen={setOpen}
-      onAction={taskCtx.updateTask}
-      apiFuntion={api.updateTask}
-    >
-      <ButtonPrimary onClick={handleOpen} variant="contained" color="primary" startIcon={<EditIcon />}>
-        Edit
-      </ButtonPrimary>
-    </TaskForm>
-  )
+
+  const btnEdit = <ButtonPrimary startIcon={<EditIcon />}>Edit</ButtonPrimary>
+  return <TaskForm label={btnEdit} id={props.id} submitLabel="Update" onAction={taskCtx.updateTask}></TaskForm>
 }

@@ -1,83 +1,73 @@
-import React from "react"
+import React, { ReactElement, useContext } from "react"
 import Modal from "@material-ui/core/Modal"
 import Backdrop from "@material-ui/core/Backdrop"
-import { Button, Fab, Paper } from "@material-ui/core"
-import AddIcon from "@material-ui/icons/Add"
+import { Button, FormControlLabel, Paper } from "@material-ui/core"
 import { useState } from "react"
 import styled from "styled-components"
 import { TextFieldOutlined } from "../textfields/TextFieldOutlined"
-import { ButtonPrimary } from "../buttons/ButtonPrimary"
-import { CustomAlert, CustomButton } from "../../pages/UserProfile"
-import { useAppApiClient } from "../../hooks/useAppApiClient"
-import useAsync from "../../hooks/useAsync"
 import { useEffect } from "react"
-import { Error, Loading } from "../../pages/Register"
 import { Task } from "../../services/api/types/Task"
+import { Loading } from "../text/Loading"
+import { Error } from "../text/Error"
+import useAsync from "../../hooks/useAsync"
+import { ButtonPrimary } from "../buttons/ButtonPrimary"
+import { useSnackbar } from "notistack"
+import Checkbox, { CheckboxProps } from "@material-ui/core/Checkbox"
+import TaskContext from "../../contexts/TaskProvider"
 
-export const TaskForm: React.FC<{
-  task?: Task
-  btnLabel: string
-  onAction: (...data: any) => void
-  apiFuntion: (...data: any) => any
-  open: boolean
-  setOpen: (data: boolean) => void
-}> = (props) => {
-  const { apiFuntion, open, setOpen, btnLabel } = props
-  const { run, loading, result, error } = useAsync(apiFuntion)
-  const [description, setDescription] = useState(props.task?.description || "")
+export type TaskFormProps = {
+  id?: number
+  submitLabel: string
+  onAction: (data: any) => void
+
+  label: ReactElement
+}
+export const TaskForm = (props: TaskFormProps) => {
+  const taskCtx = useContext(TaskContext)
+  const { enqueueSnackbar } = useSnackbar()
+  const { submitLabel, onAction } = props
+  const [open, setOpen] = useState(false)
+  const handleOpen = () => {
+    setOpen(true)
+  }
+  const handleClose = () => {
+    setOpen(false)
+  }
+
+  const [description, setDescription] = useState(props.id ? taskCtx.tasks[props.id].description : "")
+  const [completed, setCompleted] = useState(props.id ? taskCtx.tasks[props.id].completed : false)
+
   const changeDescriptionHanndler = (e) => {
     setDescription(e.target.value)
   }
-  const [isShowAlert, setIsShowAlert] = useState(false)
-
-  const handleClose = () => {
-    setOpen(false)
+  const changeStatusHandler = (e) => {
+    setCompleted(e.target.checked)
   }
 
   const submitHandler = (e) => {
     e.preventDefault()
     const value = description.trim()
-    if (value.length > 0) {
-      let requestData
-      if (props.task) {
-        requestData = {
-          id: props.task._id,
-          data: {
-            description: value,
-          },
-        }
-      } else requestData = value
-      run(requestData)
+    if (value.length === 0) return
+
+    const task = {
+      description: value,
+      completed,
+    }
+    const requestData = props.id ? { id: props.id, newData: task } : task
+
+    try {
+      onAction(requestData)
+      enqueueSnackbar(`${submitLabel} success!`, { variant: "success" })
+      handleClose()
+    } catch (error) {
+      console.log(error)
+      enqueueSnackbar(`${submitLabel} failure!`, { variant: "error" })
     }
   }
- 
-  useEffect(() => {
-    let timeout
-    if (!loading) {
-      if (result || error) {
-        setIsShowAlert(true)
-        timeout = setTimeout(() => {
-          setIsShowAlert(false)
-        }, 2000)
-      }
-      if (result) {
-        props.onAction(result)
-        handleClose()
-      }
-    }
-    return () => {
-      if (timeout) clearTimeout(timeout)
-    }
-  }, [loading])
 
   return (
     <div>
-      {isShowAlert && (
-        <CustomAlert severity={`${error ? "error" : "success"}`}>
-          {error ? error : `${btnLabel} Task Success!`}
-        </CustomAlert>
-      )}
-      {props.children}
+      <div onClick={handleOpen}>{props.label}</div>
       <Modal
         aria-labelledby="transition-modal-title"
         aria-describedby="transition-modal-description"
@@ -92,6 +82,7 @@ export const TaskForm: React.FC<{
         <CustomPaper>
           <form onSubmit={submitHandler}>
             <TextFieldOutlined
+              autoFocus
               value={description}
               onChange={changeDescriptionHanndler}
               required
@@ -100,16 +91,17 @@ export const TaskForm: React.FC<{
               fullWidth
               rows={4}
             ></TextFieldOutlined>
-            {loading && <Loading>Loading...</Loading>}
-            {error && <Error>{error}</Error>}
-            {!loading && (
-              <Actions>
-                <CustomButton type="submit">{btnLabel}</CustomButton>
-                <Button onClick={handleClose} variant="contained">
-                  Cancel
-                </Button>
-              </Actions>
-            )}
+            <FormControlLabel
+              control={<StatusCheckbox checked={completed} onChange={changeStatusHandler} name="completed" />}
+              label="Completed"
+            />
+
+            <Actions>
+              <CustomButton type="submit">{submitLabel}</CustomButton>
+              <Button onClick={handleClose} variant="contained">
+                Cancel
+              </Button>
+            </Actions>
           </form>
         </CustomPaper>
       </Modal>
@@ -123,7 +115,14 @@ const CustomPaper = styled(Paper)`
   padding: 1rem;
 `
 const Actions = styled.div`
+  margin-top: 1rem;
   display: flex;
   align-items: center;
   justify-content: flex-end;
+`
+const CustomButton = styled(ButtonPrimary)`
+  margin-right: 1rem;
+`
+const StatusCheckbox = styled(Checkbox).attrs((props) => ({ ...props, color: "default" }))`
+  color: green;
 `

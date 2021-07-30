@@ -8,7 +8,7 @@ import Typography from "@material-ui/core/Typography"
 
 import { EmptyLayout } from "../layouts/EmptyLayout"
 import AuthContext from "../contexts/AuthProvider"
-import { Error, Loading, CustomAvatar, CustomPaper, CustomForm, CustomButton } from "./Register"
+import { CustomAvatar, CustomPaper, CustomForm, CustomLink } from "./Register"
 import { TextFieldOutlined } from "../components/textfields/TextFieldOutlined"
 import styled from "styled-components"
 import useAsync from "../hooks/useAsync"
@@ -17,20 +17,27 @@ import { useHistory } from "react-router"
 import { useLinks } from "../hooks/useLinks"
 import { LoginRequest } from "../services/api/types/LoginRequest"
 import { Container } from "@material-ui/core"
+import { Error } from "../components/text/Error"
+import { Loading } from "../components/text/Loading"
+import { ButtonPrimary } from "../components/buttons/ButtonPrimary"
 
 export const Login = () => {
+  const [error, setError] = useState<string | null>(null)
   const links = useLinks().common
   const history = useHistory()
   const authCtx = useContext(AuthContext)
   const api = useAppApiClient()
-  const handleLogin = useAsync(async (data: LoginRequest) => {
+  const login = useAsync(async (data: LoginRequest) => {
     const result = await api.login(data)
     if (result) {
-      authCtx.login(result)
+      authCtx.setUser(result.user)
+      localStorage.setItem("token", result.token)
       history.push(links.home())
+    } else {
+      setError("Email or password is wrong!")
     }
   })
-  const { error, loading } = handleLogin
+  const { loading } = login
   const [formValue, setFormValue] = useState({
     email: "",
     password: "",
@@ -42,7 +49,7 @@ export const Login = () => {
 
   const submitHandler = (e) => {
     e.preventDefault()
-    handleLogin.run(formValue)
+    login.run(formValue)
   }
 
   return (
@@ -84,12 +91,7 @@ export const Login = () => {
             )}
 
             <Actions>
-              <Link href="#" variant="body2">
-                Forgot password?
-              </Link>
-              <Link href="/register" variant="body2">
-                {"Don't have an account? Sign Up"}
-              </Link>
+              <CustomLink to={links.register()}>Don't have an account? Sign Up</CustomLink>
             </Actions>
           </CustomForm>
         </CustomPaper>
@@ -104,4 +106,7 @@ export const CustomTextField = styled(TextFieldOutlined)`
 export const Actions = styled.div`
   display: flex;
   justify-content: space-between;
+`
+const CustomButton = styled(ButtonPrimary)`
+  margin: 1rem 0;
 `

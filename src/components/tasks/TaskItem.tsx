@@ -2,9 +2,7 @@ import React from "react"
 import Card from "@material-ui/core/Card"
 import CardActions from "@material-ui/core/CardActions"
 import CardContent from "@material-ui/core/CardContent"
-import { CustomSpan } from "../../pages/UserProfile"
 import { Button, CircularProgress } from "@material-ui/core"
-import { ButtonPrimary } from "../buttons/ButtonPrimary"
 import DeleteIcon from "@material-ui/icons/Delete"
 import EditIcon from "@material-ui/icons/Edit"
 import styled from "styled-components"
@@ -15,29 +13,36 @@ import { useAppApiClient } from "../../hooks/useAppApiClient"
 import { useEffect } from "react"
 import { useContext } from "react"
 import TaskContext from "../../contexts/TaskProvider"
+import { ButtonPrimary } from "../buttons/ButtonPrimary"
+import { useSnackbar } from "notistack"
 
-export const TaskItem: React.FC<{
+export type TaskItemProps = {
   task: Task
-}> = (props) => {
+  id: number
+}
+export const TaskItem = (props: TaskItemProps) => {
   const { task } = props
+  const { enqueueSnackbar } = useSnackbar()
   const taskCtx = useContext(TaskContext)
   const api = useAppApiClient()
-  const { run, result, loading } = useAsync(api.updateTask)
+
   const changeStatusHandler = () => {
     const completed = !task.completed
-    run({
-      id: task._id,
-      data: {
-        completed,
-      },
-    })
+    try {
+      taskCtx.updateTask({
+        id: props.id,
+        newData: {
+          ...task,
+          completed,
+        },
+      })
+    } catch (error) {
+      enqueueSnackbar("Something is wrong!", { variant: "error" })
+    }
   }
-  useEffect(() => {
-    if (result) taskCtx.updateTask(result)
-  }, [result])
+
   return (
     <CustomCard>
-      {loading && <Spinner></Spinner>}
       <CustomCardContent>
         <Description>{task.description}</Description>
         <Status onClick={changeStatusHandler} completed={task.completed}>
@@ -45,7 +50,7 @@ export const TaskItem: React.FC<{
         </Status>
       </CustomCardContent>
       <CardActions>
-        <UpdateTask task={task}></UpdateTask>
+        <UpdateTask id={props.id}></UpdateTask>
         <Button variant="contained" color="secondary" startIcon={<DeleteIcon />}>
           Delete
         </Button>
@@ -53,17 +58,13 @@ export const TaskItem: React.FC<{
     </CustomCard>
   )
 }
-const Spinner = styled(CircularProgress)`
-  position: absolute;
-  z-index: 11;
-  top: calc(50% - 20px);
-  left: calc(50% - 20px);
-`
+
 const CustomCard = styled(Card)`
-  position: relative;
-  margin: 1rem;
-  width: 275px;
-  margin: 1rem;
+  --columns: 5;
+  overflow: hidden;
+  width: calc(calc(100% / var(--columns)) - 20px);
+  margin-left: 20px;
+  margin-bottom: 20px;
   animation: bump 0.3s ease-out;
   @keyframes bump {
     0% {
@@ -82,16 +83,23 @@ const CustomCard = styled(Card)`
       transform: scale(1);
     }
   }
+  @media screen and (max-width: 1023px) {
+    --columns: 2;
+  }
+  @media screen and (max-width: 767px) {
+    --columns: 1;
+  }
 `
 const CustomCardContent = styled(CardContent)`
-  height: 20rem;
+  min-height: 20rem;
+  display: flex;
+  flex-direction: column;
 `
 const Description = styled.div`
   overflow: hidden;
   font-size: 1.2rem;
   font-weight: 500;
-  width: 100%;
-  height: 80%;
+  flex: 1;
 `
 const Status = styled.div<{ completed: boolean }>`
   color: ${(props) => (props.completed ? "green" : "lightgray")};
@@ -100,8 +108,9 @@ const Status = styled.div<{ completed: boolean }>`
   align-items: center;
   font-weight: bold;
   font-size: 1.5rem;
-  width: 100%;
-  height: 20%;
+  padding: 0.5rem 0;
+  flex-shrink: 0;
+  margin-top: auto;
   border-bottom: 1px solid lightgray;
   border-top: 1px solid lightgray;
   transition: 0.25s ease;
