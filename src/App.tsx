@@ -14,7 +14,7 @@ import { Loading } from "./components/text/Loading"
 export const App = () => {
   const links = useLinks().common
   const authCtx = useContext(AuthContext)
-  const isLoggedIn = !!authCtx.user
+  const isLoggedIn = true
   const token = localStorage.getItem("token")
 
   return (
@@ -28,7 +28,7 @@ export const App = () => {
                   <Loading>Loading...</Loading>
                 ) : (
                   <>
-                    {/* {!isLoggedIn && <Redirect to={links.login()}></Redirect>} */}
+                    {!isLoggedIn && <Redirect to={links.login()}></Redirect>}
                     <TaskProvider>
                       <HomePage></HomePage>
                     </TaskProvider>

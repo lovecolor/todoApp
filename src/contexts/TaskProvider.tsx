@@ -12,11 +12,11 @@ const TaskContext = createContext<{
   tasks: Task[]
   loading: boolean
   addTask: (newTask: Task) => void
-  updateTask: (data: { id: number; newData: Task }) => void
+  updateTask: (task: Task) => void
 }>({
   tasks: [],
   addTask: (newTask: Task) => {},
-  updateTask: (data: { id: number; newData: Task }) => {},
+  updateTask: (task: Task) => {},
   loading: false,
 })
 export const TaskProvider: React.FC = (props) => {
@@ -25,14 +25,21 @@ export const TaskProvider: React.FC = (props) => {
 
   const getAllTasks = useAsync(api.getAllTasks)
   const addTask = (newTask: Task) => {
-    setTasks([...tasks, newTask])
+    setTasks([
+      ...tasks,
+      {
+        ...newTask,
+        _id: tasks.length === 0 ? 0 : tasks[tasks.length - 1]._id! + 1,
+      },
+    ])
   }
-  const updateTask = (data: { id: number; newData: Task }) => {
-    setTasks([...tasks.slice(0, data.id), data.newData, ...tasks.slice(data.id + 1)])
+  const updateTask = (editedTask: Task) => {
+    const taskIdEdited = tasks.findIndex((task) => task._id === editedTask._id)
+    const newTasks = [...tasks]
+    newTasks[taskIdEdited] = editedTask
+    setTasks(newTasks)
   }
-  useEffect(() => {
-    console.log(tasks)
-  }, [tasks])
+
   useEffect(() => {
     if (getAllTasks.result) setTasks(getAllTasks.result)
   }, [getAllTasks.result])
@@ -45,7 +52,6 @@ export const TaskProvider: React.FC = (props) => {
   return (
     <TaskContext.Provider value={contextValue}>
       {props.children}
-
       {getAllTasks.error && <Error>{getAllTasks.error}</Error>}
       {!getAllTasks.loading && tasks.length == 0 && <NoResult>Without any task</NoResult>}
     </TaskContext.Provider>
@@ -55,5 +61,6 @@ const NoResult = styled.p`
   width: 100%;
   text-align: center;
   color: lightgray;
+  user-select: none;
 `
 export default TaskContext

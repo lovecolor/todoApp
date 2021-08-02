@@ -16,16 +16,16 @@ import Checkbox, { CheckboxProps } from "@material-ui/core/Checkbox"
 import TaskContext from "../../contexts/TaskProvider"
 
 export type TaskFormProps = {
-  id?: number
+  task?: Task
   submitLabel: string
-  onAction: (data: any) => void
+  onAction: (task: Task) => void
 
   label: ReactElement
 }
 export const TaskForm = (props: TaskFormProps) => {
   const taskCtx = useContext(TaskContext)
   const { enqueueSnackbar } = useSnackbar()
-  const { submitLabel, onAction } = props
+  const { submitLabel, onAction, task } = props
   const [open, setOpen] = useState(false)
   const handleOpen = () => {
     setOpen(true)
@@ -34,8 +34,8 @@ export const TaskForm = (props: TaskFormProps) => {
     setOpen(false)
   }
 
-  const [description, setDescription] = useState(props.id ? taskCtx.tasks[props.id].description : "")
-  const [completed, setCompleted] = useState(props.id ? taskCtx.tasks[props.id].completed : false)
+  const [description, setDescription] = useState(task?.description || "")
+  const [completed, setCompleted] = useState(task?.completed || false)
 
   const changeDescriptionHanndler = (e) => {
     setDescription(e.target.value)
@@ -49,18 +49,17 @@ export const TaskForm = (props: TaskFormProps) => {
     const value = description.trim()
     if (value.length === 0) return
 
-    const task = {
+    const newTask = {
       description: value,
       completed,
     }
-    const requestData = props.id ? { id: props.id, newData: task } : task
+    const requestData = task ? { ...newTask, _id: task._id } : newTask
 
     try {
       onAction(requestData)
       enqueueSnackbar(`${submitLabel} success!`, { variant: "success" })
       handleClose()
     } catch (error) {
-      console.log(error)
       enqueueSnackbar(`${submitLabel} failure!`, { variant: "error" })
     }
   }

@@ -108,9 +108,9 @@ type UpdateTaskRequest = {
 }
 const updateTask =
   (api: AxiosInstance) =>
-  async (data: UpdateTaskRequest): Promise<Task | undefined> => {
+  async (req: UpdateTaskRequest): Promise<Task | undefined> => {
     try {
-      const res = await api.put<AddTaskReponse>(`/task/${data.id}`, data.data)
+      const res = await api.put<AddTaskReponse>(`/task/${req.id}`, req.data)
 
       return res.data.data
     } catch (error) {}
