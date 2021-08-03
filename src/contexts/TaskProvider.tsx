@@ -1,3 +1,4 @@
+import { useSnackbar } from "notistack"
 import { useEffect } from "react"
 import { useState } from "react"
 import { createContext } from "react"
@@ -20,6 +21,7 @@ const TaskContext = createContext<{
   loading: false,
 })
 export const TaskProvider: React.FC = (props) => {
+  const { enqueueSnackbar } = useSnackbar()
   const [tasks, setTasks] = useState<Task[]>([])
   const api = useAppApiClient()
 
@@ -34,10 +36,13 @@ export const TaskProvider: React.FC = (props) => {
     ])
   }
   const updateTask = (editedTask: Task) => {
-    const taskIdEdited = tasks.findIndex((task) => task._id === editedTask._id)
-    const newTasks = [...tasks]
-    newTasks[taskIdEdited] = editedTask
-    setTasks(newTasks)
+    const editedTaskIndex = tasks.findIndex((task) => task._id === editedTask._id)
+    if (editedTaskIndex < 0) {
+      enqueueSnackbar("Edit failure!", { variant: "error" })
+      return
+    }
+    const updatedTasks = tasks.map((task) => (task._id === editedTaskIndex ? editedTask : task))
+    setTasks(updatedTasks)
   }
 
   useEffect(() => {

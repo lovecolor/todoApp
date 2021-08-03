@@ -30,7 +30,7 @@ export const HomePage: React.FC = (props) => {
             </CustomFloatBtn>
           }
           submitLabel="Add"
-          onAction={taskCtx.addTask}
+          onSubmit={taskCtx.addTask} 
         ></TaskForm>
       </Main>
     </MainLayout>

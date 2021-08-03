@@ -26,14 +26,10 @@ export const TaskItem = (props: TaskItemProps) => {
 
   const changeStatusHandler = () => {
     const completed = !task.completed
-    try {
-      taskCtx.updateTask({
-        ...task,
-        completed: !task.completed,
-      })
-    } catch (error) {
-      enqueueSnackbar("Something is wrong!", { variant: "error" })
-    }
+    taskCtx.updateTask({
+      ...task,
+      completed: !task.completed,
+    })
   }
   const btnEdit = <ButtonPrimary startIcon={<EditIcon />}>Edit</ButtonPrimary>
   return (
@@ -45,7 +41,7 @@ export const TaskItem = (props: TaskItemProps) => {
         </Status>
       </CardContent>
       <CardActions>
-        <TaskForm task={task} label={btnEdit} submitLabel="Update" onAction={taskCtx.updateTask}></TaskForm>
+        <TaskForm task={task} label={btnEdit} submitLabel="Update" onSubmit={taskCtx.updateTask}></TaskForm>
         <CustomButton variant="contained" color="secondary" startIcon={<DeleteIcon />}>
           Delete
         </CustomButton>
@@ -97,7 +93,6 @@ const Description = styled.div`
   font-size: 1.2rem;
   font-weight: 500;
   flex: 1;
-  
 `
 const Status = styled.div<{ completed: boolean }>`
   color: ${(props) => (props.completed ? "green" : "lightgray")};

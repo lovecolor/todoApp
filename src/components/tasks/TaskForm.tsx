@@ -18,14 +18,14 @@ import TaskContext from "../../contexts/TaskProvider"
 export type TaskFormProps = {
   task?: Task
   submitLabel: string
-  onAction: (task: Task) => void
+  onSubmit: (task: Task) => void
 
   label: ReactElement
 }
 export const TaskForm = (props: TaskFormProps) => {
   const taskCtx = useContext(TaskContext)
   const { enqueueSnackbar } = useSnackbar()
-  const { submitLabel, onAction, task } = props
+  const { submitLabel, onSubmit, task } = props
   const [open, setOpen] = useState(false)
   const handleOpen = () => {
     setOpen(true)
@@ -55,13 +55,9 @@ export const TaskForm = (props: TaskFormProps) => {
     }
     const requestData = task ? { ...newTask, _id: task._id } : newTask
 
-    try {
-      onAction(requestData)
-      enqueueSnackbar(`${submitLabel} success!`, { variant: "success" })
-      handleClose()
-    } catch (error) {
-      enqueueSnackbar(`${submitLabel} failure!`, { variant: "error" })
-    }
+    onSubmit(requestData)
+    enqueueSnackbar(`${submitLabel} success!`, { variant: "success" })
+    handleClose()
   }
 
   return (
