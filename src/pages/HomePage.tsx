@@ -24,7 +24,7 @@ export const HomePage: React.FC = (props) => {
         {taskCtx.loading && <Loading>Loading...</Loading>}
         <TaskList list={taskCtx.tasks}></TaskList>
         <TaskForm
-          label={
+          btnOpen={
             <CustomFloatBtn color="primary" aria-label="add">
               <AddIcon />
             </CustomFloatBtn>

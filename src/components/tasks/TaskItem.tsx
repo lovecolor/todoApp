@@ -31,7 +31,7 @@ export const TaskItem = (props: TaskItemProps) => {
       completed: !task.completed,
     })
   }
-  const btnEdit = <ButtonPrimary startIcon={<EditIcon />}>Edit</ButtonPrimary>
+
   return (
     <CustomCard>
       <CardContent>
@@ -41,7 +41,12 @@ export const TaskItem = (props: TaskItemProps) => {
         </Status>
       </CardContent>
       <CardActions>
-        <TaskForm task={task} label={btnEdit} submitLabel="Update" onSubmit={taskCtx.updateTask}></TaskForm>
+        <TaskForm
+          task={task}
+          btnOpen={<ButtonPrimary startIcon={<EditIcon />}>Edit</ButtonPrimary>}
+          submitLabel="Update"
+          onSubmit={taskCtx.updateTask}
+        ></TaskForm>
         <CustomButton variant="contained" color="secondary" startIcon={<DeleteIcon />}>
           Delete
         </CustomButton>

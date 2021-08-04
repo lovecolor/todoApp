@@ -20,7 +20,7 @@ export type TaskFormProps = {
   submitLabel: string
   onSubmit: (task: Task) => void
 
-  label: ReactElement
+  btnOpen: ReactElement
 }
 export const TaskForm = (props: TaskFormProps) => {
   const taskCtx = useContext(TaskContext)
@@ -62,7 +62,7 @@ export const TaskForm = (props: TaskFormProps) => {
 
   return (
     <div>
-      <div onClick={handleOpen}>{props.label}</div>
+      <div onClick={handleOpen}>{props.btnOpen}</div>
       <Modal
         aria-labelledby="transition-modal-title"
         aria-describedby="transition-modal-description"
