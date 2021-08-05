@@ -14,11 +14,13 @@ const TaskContext = createContext<{
   loading: boolean
   addTask: (newTask: Task) => void
   updateTask: (task: Task) => void
+  removeTask: (taskId: number) => void
 }>({
   tasks: [],
   addTask: (newTask: Task) => {},
   updateTask: (task: Task) => {},
   loading: false,
+  removeTask: (taskId: number) => {},
 })
 export const TaskProvider: React.FC = (props) => {
   const { enqueueSnackbar } = useSnackbar()
@@ -44,7 +46,19 @@ export const TaskProvider: React.FC = (props) => {
     const updatedTasks = tasks.map((task) => (task._id === editedTaskIndex ? editedTask : task))
     setTasks(updatedTasks)
   }
-
+  const removeTask = (taskId: number) => {
+    const newTasks = tasks.filter((task) => task._id != taskId)
+    if (newTasks.length === tasks.length - 1) {
+      setTasks(newTasks)
+      enqueueSnackbar("Delete success!", {
+        variant: "success",
+      })
+    } else {
+      enqueueSnackbar("Delete failure!", {
+        variant: "error",
+      })
+    }
+  }
   useEffect(() => {
     if (getAllTasks.result) setTasks(getAllTasks.result)
   }, [getAllTasks.result])
@@ -52,7 +66,9 @@ export const TaskProvider: React.FC = (props) => {
     tasks,
     addTask,
     updateTask,
+    removeTask,
     loading: getAllTasks.loading,
+
   }
   return (
     <TaskContext.Provider value={contextValue}>

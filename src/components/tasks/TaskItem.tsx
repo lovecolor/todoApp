@@ -47,7 +47,12 @@ export const TaskItem = (props: TaskItemProps) => {
           submitLabel="Update"
           onSubmit={taskCtx.updateTask}
         ></TaskForm>
-        <CustomButton variant="contained" color="secondary" startIcon={<DeleteIcon />}>
+        <CustomButton
+          onClick={taskCtx.removeTask.bind(null, task._id!)} 
+          variant="contained"
+          color="secondary"
+          startIcon={<DeleteIcon />}
+        >
           Delete
         </CustomButton>
       </CardActions>
