@@ -11,14 +11,16 @@ export type TaskListProps = {
 export const TaskList = (props: TaskListProps) => {
   return (
     <Root>
-      {props.list.map((task) => (
-        <TaskItem task={task} key={task._id}></TaskItem>
+      {props.list.map((task, id) => (
+        <TaskItem task={task} key={id} ></TaskItem>
       ))}
     </Root>
   )
 }
 const Root = styled.div`
   width: 100%;
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+  padding: 1rem;
+  grid-gap: 36px;
 `

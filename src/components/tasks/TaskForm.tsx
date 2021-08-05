@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react"
+import React, { ReactElement, useContext } from "react"
 import Modal from "@material-ui/core/Modal"
 import Backdrop from "@material-ui/core/Backdrop"
 import { Button, FormControlLabel, Paper } from "@material-ui/core"
@@ -13,17 +13,19 @@ import useAsync from "../../hooks/useAsync"
 import { ButtonPrimary } from "../buttons/ButtonPrimary"
 import { useSnackbar } from "notistack"
 import Checkbox, { CheckboxProps } from "@material-ui/core/Checkbox"
+import TaskContext from "../../contexts/TaskProvider"
 
 export type TaskFormProps = {
   task?: Task
   submitLabel: string
-  onAction: (task: Task) => void
-  apiFuntion: (...data: any) => any
-  label: ReactElement
+  onSubmit: (task: Task) => void
+
+  btnOpen: ReactElement
 }
 export const TaskForm = (props: TaskFormProps) => {
+  const taskCtx = useContext(TaskContext)
   const { enqueueSnackbar } = useSnackbar()
-  const { apiFuntion, submitLabel, onAction } = props
+  const { submitLabel, onSubmit, task } = props
   const [open, setOpen] = useState(false)
   const handleOpen = () => {
     setOpen(true)
@@ -31,18 +33,10 @@ export const TaskForm = (props: TaskFormProps) => {
   const handleClose = () => {
     setOpen(false)
   }
-  const { run, loading, error } = useAsync(async (data) => {
-    const result = await apiFuntion(data)
-    if (result) {
-      enqueueSnackbar(`${submitLabel} success!`, { variant: "success" })
-      onAction(result)
-      handleClose()
-    } else {  
-      enqueueSnackbar(`${submitLabel} failure!`, { variant: "error" })
-    }
-  })
-  const [description, setDescription] = useState(props.task?.description || "")
-  const [completed, setCompleted] = useState(props.task?.completed || false)
+
+  const [description, setDescription] = useState(task?.description || "")
+  const [completed, setCompleted] = useState(task?.completed || false)
+
   const changeDescriptionHanndler = (e) => {
     setDescription(e.target.value)
   }
@@ -55,18 +49,20 @@ export const TaskForm = (props: TaskFormProps) => {
     const value = description.trim()
     if (value.length === 0) return
 
-    const data = {
+    const newTask = {
       description: value,
       completed,
     }
-    const requestData = props.task ? { id: props.task._id, data } : data
+    const requestData = task ? { ...newTask, _id: task._id } : newTask
 
-    run(requestData)
+    onSubmit(requestData)
+    enqueueSnackbar(`${submitLabel} success!`, { variant: "success" })
+    handleClose()
   }
 
   return (
     <div>
-      <div onClick={handleOpen}>{props.label}</div>
+      <div onClick={handleOpen}>{props.btnOpen}</div>
       <Modal
         aria-labelledby="transition-modal-title"
         aria-describedby="transition-modal-description"
@@ -81,6 +77,7 @@ export const TaskForm = (props: TaskFormProps) => {
         <CustomPaper>
           <form onSubmit={submitHandler}>
             <TextFieldOutlined
+              autoFocus
               value={description}
               onChange={changeDescriptionHanndler}
               required
@@ -93,16 +90,13 @@ export const TaskForm = (props: TaskFormProps) => {
               control={<StatusCheckbox checked={completed} onChange={changeStatusHandler} name="completed" />}
               label="Completed"
             />
-            {loading && <Loading>Loading...</Loading>}
-            {error && <Error>{error}</Error>}
-            {!loading && (
-              <Actions>
-                <CustomButton type="submit">{submitLabel}</CustomButton>
-                <Button onClick={handleClose} variant="contained">
-                  Cancel
-                </Button>
-              </Actions>
-            )}
+
+            <Actions>
+              <CustomButton type="submit">{submitLabel}</CustomButton>
+              <Button onClick={handleClose} variant="contained">
+                Cancel
+              </Button>
+            </Actions>
           </form>
         </CustomPaper>
       </Modal>

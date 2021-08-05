@@ -138,6 +138,7 @@ const CustomSpan = styled.span`
   font-size: 1.3rem;
   text-align: center;
 `
+ 
 const CustomButton = styled(ButtonPrimary)`
   margin: 1rem;
 `

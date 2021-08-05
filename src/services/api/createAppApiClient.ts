@@ -15,6 +15,7 @@ export const createAppApiClient = (api: AxiosInstance) => {
     updateUser: updateUser(api),
     getAllTasks: getAllTasks(api),
     addTask: addTask(api),
+    updateTask: updateTask(api),
   }
 }
 
@@ -94,6 +95,22 @@ const addTask =
   async (data: AddTaskRequest): Promise<Task | undefined> => {
     try {
       const res = await api.post<AddTaskReponse>("/task", data)
+
+      return res.data.data
+    } catch (error) {}
+  }
+type UpdateTaskRequest = {
+  id: string
+  data: {
+    description?: string
+    completed?: boolean
+  }
+}
+const updateTask =
+  (api: AxiosInstance) =>
+  async (req: UpdateTaskRequest): Promise<Task | undefined> => {
+    try {
+      const res = await api.put<AddTaskReponse>(`/task/${req.id}`, req.data)
 
       return res.data.data
     } catch (error) {}
