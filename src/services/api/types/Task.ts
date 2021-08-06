@@ -1,5 +1,9 @@
 export type Task = {
   completed: boolean
   description: string
-  _id?: number
+  _id?: string
+  owner?: string
+  createAt?: string
+  updatedAt?: string
+  __v?: number
 }
