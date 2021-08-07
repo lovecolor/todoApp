@@ -24,19 +24,33 @@ export const TaskItem = (props: TaskItemProps) => {
   const taskCtx = useContext(TaskContext)
   const api = useAppApiClient()
 
-  const changeStatusHandler = () => {
+  const changeStatus = useAsync(async () => {
     const completed = !task.completed
-    taskCtx.updateTask({
-      ...task,
-      completed: !task.completed,
+    const result = await api.updateTask({
+      id: task._id!,
+      data: {
+        completed,
+      },
     })
-  }
+
+    if (result) taskCtx.updateTask(result)
+  })
+  const removeTask = useAsync(async () => {
+    const result = await api.removeTask(task._id!)
+    if (result) {
+      taskCtx.removeTask(task._id!)
+      enqueueSnackbar("Delete success!", { variant: "success" })
+    } else {
+      enqueueSnackbar("Delete failure!", { variant: "error" })
+    }
+  })
 
   return (
     <CustomCard>
+      {(removeTask.loading || changeStatus.loading) && <Spinner />}
       <CardContent>
         <Description>{task.description}</Description>
-        <Status onClick={changeStatusHandler} completed={task.completed}>
+        <Status onClick={() => changeStatus.run()} completed={task.completed}>
           Completed
         </Status>
       </CardContent>
@@ -45,15 +59,21 @@ export const TaskItem = (props: TaskItemProps) => {
           task={task}
           btnOpen={<ButtonPrimary startIcon={<EditIcon />}>Edit</ButtonPrimary>}
           submitLabel="Update"
-          onSubmit={taskCtx.updateTask}
+          onAction={taskCtx.updateTask}
+          apiFuntion={api.updateTask}
         ></TaskForm>
-        <CustomButton variant="contained" color="secondary" startIcon={<DeleteIcon />}>
+        <CustomButton onClick={() => removeTask.run()} variant="contained" color="secondary" startIcon={<DeleteIcon />}>
           Delete
         </CustomButton>
       </CardActions>
     </CustomCard>
   )
 }
+const Spinner = styled(CircularProgress)`
+  position: absolute;
+  top: calc(50% - 20px);
+  left: calc(50% - 20px);
+`
 const CustomButton = styled(Button)`
   margin-left: 0.5rem;
 `
@@ -66,6 +86,7 @@ const CardActions = styled.div`
   justify-content: flex-end;
 `
 const CustomCard = styled(Card)`
+  position: relative;
   padding: 1rem;
   overflow: hidden;
   width: 100%;

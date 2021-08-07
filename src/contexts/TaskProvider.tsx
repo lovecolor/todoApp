@@ -14,37 +14,31 @@ const TaskContext = createContext<{
   loading: boolean
   addTask: (newTask: Task) => void
   updateTask: (task: Task) => void
+  removeTask: (taskId: string) => void
 }>({
   tasks: [],
   addTask: (newTask: Task) => {},
   updateTask: (task: Task) => {},
   loading: false,
+  removeTask: (taskId: string) => {},
 })
 export const TaskProvider: React.FC = (props) => {
   const { enqueueSnackbar } = useSnackbar()
   const [tasks, setTasks] = useState<Task[]>([])
   const api = useAppApiClient()
 
-  const getAllTasks = useAsync(api.getAllTasks)
+  const getAllTasks = useAsync(api.getAllTasks, true)
   const addTask = (newTask: Task) => {
-    setTasks([
-      ...tasks,
-      {
-        ...newTask,
-        _id: tasks.length === 0 ? 0 : tasks[tasks.length - 1]._id! + 1,
-      },
-    ])
+    setTasks([...tasks, newTask])
   }
   const updateTask = (editedTask: Task) => {
-    const editedTaskIndex = tasks.findIndex((task) => task._id === editedTask._id)
-    if (editedTaskIndex < 0) {
-      enqueueSnackbar("Edit failure!", { variant: "error" })
-      return
-    }
-    const updatedTasks = tasks.map((task) => (task._id === editedTaskIndex ? editedTask : task))
+    const updatedTasks = tasks.map((task) => (task._id === editedTask._id ? editedTask : task))
     setTasks(updatedTasks)
   }
-
+  const removeTask = (taskId: string) => {
+    const newTasks = tasks.filter((task) => task._id != taskId)
+    setTasks(newTasks)
+  }
   useEffect(() => {
     if (getAllTasks.result) setTasks(getAllTasks.result)
   }, [getAllTasks.result])
@@ -52,6 +46,7 @@ export const TaskProvider: React.FC = (props) => {
     tasks,
     addTask,
     updateTask,
+    removeTask,
     loading: getAllTasks.loading,
   }
   return (

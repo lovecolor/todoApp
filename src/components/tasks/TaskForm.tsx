@@ -1,7 +1,7 @@
 import React, { ReactElement, useContext } from "react"
 import Modal from "@material-ui/core/Modal"
 import Backdrop from "@material-ui/core/Backdrop"
-import { Button, FormControlLabel, Paper } from "@material-ui/core"
+import { Button, CircularProgress, FormControlLabel, Paper } from "@material-ui/core"
 import { useState } from "react"
 import styled from "styled-components"
 import { TextFieldOutlined } from "../textfields/TextFieldOutlined"
@@ -18,14 +18,24 @@ import TaskContext from "../../contexts/TaskProvider"
 export type TaskFormProps = {
   task?: Task
   submitLabel: string
-  onSubmit: (task: Task) => void
-
+  apiFuntion: (data: any) => any
+  onAction: (task: Task) => void
   btnOpen: ReactElement
 }
 export const TaskForm = (props: TaskFormProps) => {
   const taskCtx = useContext(TaskContext)
   const { enqueueSnackbar } = useSnackbar()
-  const { submitLabel, onSubmit, task } = props
+  const { submitLabel, apiFuntion, onAction, task } = props
+  const submit = useAsync(async (data) => {
+    const result = await apiFuntion(data)
+    if (result) {
+      onAction(result)
+      enqueueSnackbar(`${submitLabel} success!`, { variant: "success" })
+      handleClose()
+    } else {
+      enqueueSnackbar(`${submitLabel} failure!`, { variant: "error" })
+    }
+  })
   const [open, setOpen] = useState(false)
   const handleOpen = () => {
     setOpen(true)
@@ -53,11 +63,9 @@ export const TaskForm = (props: TaskFormProps) => {
       description: value,
       completed,
     }
-    const requestData = task ? { ...newTask, _id: task._id } : newTask
+    const requestData = task ? { id: task._id, data: newTask } : newTask
 
-    onSubmit(requestData)
-    enqueueSnackbar(`${submitLabel} success!`, { variant: "success" })
-    handleClose()
+    submit.run(requestData)
   }
 
   return (
@@ -75,7 +83,7 @@ export const TaskForm = (props: TaskFormProps) => {
         }}
       >
         <CustomPaper>
-          <form onSubmit={submitHandler}>
+          <Form onSubmit={submitHandler}>
             <TextFieldOutlined
               autoFocus
               value={description}
@@ -91,18 +99,30 @@ export const TaskForm = (props: TaskFormProps) => {
               label="Completed"
             />
 
-            <Actions>
-              <CustomButton type="submit">{submitLabel}</CustomButton>
-              <Button onClick={handleClose} variant="contained">
-                Cancel
-              </Button>
-            </Actions>
-          </form>
+            {submit.loading ? (
+              <Spinner></Spinner>
+            ) : (
+              <Actions>
+                <CustomButton type="submit">{submitLabel}</CustomButton>
+                <Button onClick={handleClose} variant="contained">
+                  Cancel
+                </Button>
+              </Actions>
+            )}
+          </Form>
         </CustomPaper>
       </Modal>
     </div>
   )
 }
+const Spinner = styled(CircularProgress)`
+  margin: auto;
+`
+
+const Form = styled.form`
+  display: flex;
+  flex-direction: column;
+`
 const CustomPaper = styled(Paper)`
   max-width: 30rem;
   margin: auto;

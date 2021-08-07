@@ -16,6 +16,7 @@ export const createAppApiClient = (api: AxiosInstance) => {
     getAllTasks: getAllTasks(api),
     addTask: addTask(api),
     updateTask: updateTask(api),
+    removeTask: removeTask(api),
   }
 }
 
@@ -113,5 +114,18 @@ const updateTask =
       const res = await api.put<AddTaskReponse>(`/task/${req.id}`, req.data)
 
       return res.data.data
+    } catch (error) {}
+  }
+type RemoveTaskReponse = {
+  success: boolean
+  data: Task
+}
+const removeTask =
+  (api: AxiosInstance) =>
+  async (req: string): Promise<RemoveTaskReponse | undefined> => {
+    try {
+      const res = await api.delete<RemoveTaskReponse>(`/task/${req}`)
+
+      return res.data
     } catch (error) {}
   }

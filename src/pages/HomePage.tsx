@@ -16,6 +16,7 @@ import { Fab } from "@material-ui/core"
 
 export const HomePage: React.FC = (props) => {
   const taskCtx = useContext(TaskContext)
+  const api = useAppApiClient()
 
   return (
     <MainLayout>
@@ -30,7 +31,8 @@ export const HomePage: React.FC = (props) => {
             </CustomFloatBtn>
           }
           submitLabel="Add"
-          onSubmit={taskCtx.addTask} 
+          onAction={taskCtx.addTask}
+          apiFuntion={api.addTask}
         ></TaskForm>
       </Main>
     </MainLayout>
