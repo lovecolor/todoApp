@@ -12,15 +12,17 @@ export const TaskList = (props: TaskListProps) => {
   return (
     <Root>
       {props.list.map((task, id) => (
-        <TaskItem task={task} key={id} ></TaskItem>
+        <TaskItem task={task} key={id}></TaskItem>
       ))}
     </Root>
   )
 }
 const Root = styled.div`
-  width: 100%;
+  margin: auto;
+  width: 80%;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
   padding: 1rem;
-  grid-gap: 36px;
+  grid-gap: 20px;
 `
+
