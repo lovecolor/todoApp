@@ -3,11 +3,8 @@ import { useState } from "react"
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft"
 import ChevronRightIcon from "@material-ui/icons/ChevronRight"
 import styled from "styled-components"
-import { useContext } from "react"
 import { NavBar } from "../components/NavBar"
 import { TaskList } from "../components/tasks/TaskList"
-import { Loading } from "../components/text/Loading"
-import TaskContext from "../contexts/TaskProvider"
 import { MainLayout } from "../layouts/MainLayout"
 import { Task } from "../services/api/types/Task"
 import { useAppApiClient } from "../hooks/useAppApiClient"
@@ -18,32 +15,76 @@ import { CircularProgress, Fab } from "@material-ui/core"
 import { FabPrimary } from "../fab/FabPrimary"
 import { useHistory, useLocation } from "react-router"
 import { useSnackbar } from "notistack"
+import useQuery from "../hooks/useQuery"
 
 export const HomePage: React.FC = (props) => {
   const { enqueueSnackbar } = useSnackbar()
-  const taskCtx = useContext(TaskContext)
   const api = useAppApiClient()
+  const history = useHistory()
+  const location = useLocation()
+  const perLoad = 8
+  const queryParams = new URLSearchParams(location.search)
+  const currentPage = queryParams.get("page") || 1
+  const { query, patchQuery } = useQuery<{ page: number }>({
+    page: +currentPage,
+  })
+  const [tasks, setTasks] = useState<Task[]>([])
 
+  const getTasks = useAsync(async () => {
+    const result = await api.getAllTasks({
+      limit: perLoad,
+      skip: (query.page - 1) * perLoad,
+    })
+    if (result) {
+      setTasks(result)
+    } else {
+      enqueueSnackbar("Something is wrong!", { variant: "error" })
+    }
+  }, true)
+  const handleAddTask = (newTask: Task) => {
+    if (tasks.length < perLoad) setTasks([...tasks, newTask])
+  }
+  const handleEditTask = (editedTask: Task) => {
+    const updatedTasks = tasks.map((task) => (task._id === editedTask._id ? editedTask : task))
+    setTasks(updatedTasks)
+  }
+  const handleRemoveTask = () => {
+    getTasks.run()
+  }
   const changePage = async (newPage) => {
     if (newPage <= 0) return
-    taskCtx.patchPage(newPage)
+    patchQuery({
+      page: newPage,
+    })
+    history.push({
+      pathname: location.pathname,
+      search: `?page=${newPage}`,
+    })
   }
-  return (
+  useEffect(() => {
+    getTasks.run()
+  }, [query.page])
+  return ( 
     <MainLayout>
       <NavBar></NavBar>
       <Main>
-        {taskCtx.page > 1 && (
-          <PrevBtn onClick={() => changePage(taskCtx.page - 1)}>
+        {getTasks.loading && (
+          <Spinner>
+            <CircularProgress />
+          </Spinner>
+        )}
+        {query.page > 1 && (
+          <PrevBtn onClick={() => changePage(query.page - 1)}>
             <ChevronLeftIcon fontSize="large" />
           </PrevBtn>
         )}
-        {taskCtx.tasks.length === taskCtx.perLoad && (
-          <NextBtn onClick={() => changePage(taskCtx.page + 1)}>
+        {tasks.length === perLoad && (
+          <NextBtn onClick={() => changePage(query.page + 1)}>
             <ChevronRightIcon fontSize="large" />
           </NextBtn>
         )}
-        {taskCtx.loading && <Loading>Loading...</Loading>}
-        <TaskList list={taskCtx.tasks}></TaskList>
+
+        <TaskList handleEditTask={handleEditTask} handleRemoveTask={handleRemoveTask} list={tasks}></TaskList>
         <TaskForm
           btnOpen={
             <AddTaskBtn>
@@ -51,14 +92,20 @@ export const HomePage: React.FC = (props) => {
             </AddTaskBtn>
           }
           submitLabel="Add"
-          onAction={taskCtx.addTask}
+          onAction={handleAddTask}
           apiFuntion={api.addTask}
         ></TaskForm>
       </Main>
     </MainLayout>
   )
 }
-
+const Spinner = styled.div`
+  z-index: 100;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+`
 const PrevBtn = styled(FabPrimary)`
   position: fixed;
   top: 50%;

@@ -1,18 +1,19 @@
 import React from "react"
 import { useContext } from "react"
 import styled from "styled-components"
-import TaskContext from "../../contexts/TaskProvider"
 import { Task } from "../../services/api/types/Task"
 import { TaskItem } from "./TaskItem"
 
 export type TaskListProps = {
   list: Task[]
+  handleEditTask: (editedTask: Task) => void
+  handleRemoveTask: () => void
 }
 export const TaskList = (props: TaskListProps) => {
   return (
     <Root>
       {props.list.map((task, id) => (
-        <TaskItem task={task} key={id}></TaskItem>
+        <TaskItem onEdit={props.handleEditTask} onRemove={props.handleRemoveTask} task={task} key={id}></TaskItem>
       ))}
     </Root>
   )
@@ -25,4 +26,3 @@ const Root = styled.div`
   padding: 1rem;
   grid-gap: 20px;
 `
-
