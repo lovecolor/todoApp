@@ -20,68 +20,30 @@ import { useHistory, useLocation } from "react-router"
 import { useSnackbar } from "notistack"
 
 export const HomePage: React.FC = (props) => {
-  const [load, setLoad] = useState(false)
   const { enqueueSnackbar } = useSnackbar()
   const taskCtx = useContext(TaskContext)
   const api = useAppApiClient()
-  const history = useHistory()
-  const location = useLocation()
-  const queryParams = new URLSearchParams(location.search)
-  let currentPage = queryParams.get("page") || 1
-  currentPage = +currentPage
 
-  const changePage = async (index) => {
-    if (index <= 0) return
-    if (index > currentPage && taskCtx.tasks.length === +currentPage * taskCtx.perLoad) {
-      setLoad(true)
-      const result = await api.getAllTasks({
-        limit: taskCtx.perLoad,
-        skip: +currentPage * taskCtx.perLoad,
-      })
-      if (result) {
-        if (result.length === 0) {
-          enqueueSnackbar("You are in last page!", { variant: "info" })
-          setLoad(false)
-          return
-        } else taskCtx.addTask(...result)
-      } else {
-        enqueueSnackbar("Something is wrong!", { variant: "error" })
-        setLoad(false)
-        return
-      }
-    }
-    setLoad(false)
-    history.push({
-      pathname: location.pathname,
-      search: `?page=${index}`,
-    })
+  const changePage = async (newPage) => {
+    if (newPage <= 0) return
+    taskCtx.patchPage(newPage)
   }
   return (
     <MainLayout>
       <NavBar></NavBar>
       <Main>
-        {load && (
-          <Spinner>
-            <CircularProgress />
-          </Spinner>
-        )}
-        {+currentPage > 1 && (
-          <PrevBtn onClick={() => changePage(+currentPage - 1)}>
+        {taskCtx.page > 1 && (
+          <PrevBtn onClick={() => changePage(taskCtx.page - 1)}>
             <ChevronLeftIcon fontSize="large" />
           </PrevBtn>
         )}
-        {currentPage * taskCtx.perLoad <= taskCtx.tasks.length && (
-          <NextBtn onClick={() => changePage(+currentPage + 1)}>
+        {taskCtx.tasks.length === taskCtx.perLoad && (
+          <NextBtn onClick={() => changePage(taskCtx.page + 1)}>
             <ChevronRightIcon fontSize="large" />
           </NextBtn>
         )}
         {taskCtx.loading && <Loading>Loading...</Loading>}
-        <TaskList
-          list={taskCtx.tasks.slice(
-            (currentPage - 1) * taskCtx.perLoad,
-            (currentPage - 1) * taskCtx.perLoad + taskCtx.perLoad
-          )}
-        ></TaskList>
+        <TaskList list={taskCtx.tasks}></TaskList>
         <TaskForm
           btnOpen={
             <AddTaskBtn>
@@ -90,19 +52,13 @@ export const HomePage: React.FC = (props) => {
           }
           submitLabel="Add"
           onAction={taskCtx.addTask}
-          apiFuntion={api.addTask}  
+          apiFuntion={api.addTask}
         ></TaskForm>
       </Main>
-    </MainLayout> 
+    </MainLayout>
   )
 }
-const Spinner = styled.div`
-  position: fixed;
-  z-index: 100;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-`
+
 const PrevBtn = styled(FabPrimary)`
   position: fixed;
   top: 50%;
@@ -115,7 +71,7 @@ const NextBtn = styled(FabPrimary)`
   position: fixed;
   top: 50%;
   right: 1rem;
-  display: flex; 
+  display: flex;
   justify-content: center;
   align-items: center;
 `

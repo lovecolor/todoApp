@@ -47,7 +47,7 @@ export const TaskItem = (props: TaskItemProps) => {
 
   return (
     <CustomCard>
-      {(removeTask.loading || changeStatus.loading) && <Spinner />}
+      {(removeTask.loading || changeStatus.loading) && <Spinner />} 
       <CardContent>
         <Description>{task.description}</Description>
         <Status onClick={() => changeStatus.run()} completed={task.completed}>

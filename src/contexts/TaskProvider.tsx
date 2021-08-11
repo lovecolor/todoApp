@@ -7,6 +7,7 @@ import { Error } from "../components/text/Error"
 import { Loading } from "../components/text/Loading"
 import { useAppApiClient } from "../hooks/useAppApiClient"
 import useAsync from "../hooks/useAsync"
+import useQuery from "../hooks/useQuery"
 import { Task } from "../services/api/types/Task"
 
 const TaskContext = createContext<{
@@ -15,6 +16,8 @@ const TaskContext = createContext<{
   addTask: (...tasks: Task[]) => void
   updateTask: (task: Task) => void
   removeTask: (taskId: string) => void
+  patchPage: (page: number) => void
+  page: number
   perLoad: number
 }>({
   tasks: [],
@@ -22,6 +25,8 @@ const TaskContext = createContext<{
   updateTask: (task: Task) => {},
   loading: false,
   removeTask: (taskId: string) => {},
+  patchPage: (page: number) => {},
+  page: 1,
   perLoad: 8,
 })
 export const TaskProvider: React.FC = (props) => {
@@ -29,11 +34,16 @@ export const TaskProvider: React.FC = (props) => {
   const [tasks, setTasks] = useState<Task[]>([])
   const api = useAppApiClient()
   const perLoad = 8
+  const { query, patchQuery } = useQuery<{ page: number }>({ page: 1 })
+  const patchPage = (newPage: number) => {
+    patchQuery({
+      page: newPage,
+    })
+  }
+  const getAllTasks = useAsync(() => api.getAllTasks({ limit: perLoad, skip: (query.page - 1) * perLoad }), true)
 
-  const getAllTasks = useAsync(() => api.getAllTasks({ limit: perLoad, skip: 0 }), true)
-
-  const addTask = (...newTasks: Task[]) => {
-    setTasks(tasks.concat(newTasks))
+  const addTask = (newTasks: Task) => {
+    if (tasks.length < perLoad) setTasks([...tasks, newTasks])
   }
 
   const updateTask = (editedTask: Task) => {
@@ -41,11 +51,20 @@ export const TaskProvider: React.FC = (props) => {
     setTasks(updatedTasks)
   }
   const removeTask = (taskId: string) => {
-    const newTasks = tasks.filter((task) => task._id != taskId)
-    setTasks(newTasks)
+    getAllTasks.run()
   }
   useEffect(() => {
-    if (getAllTasks.result) setTasks(tasks.concat(getAllTasks.result))
+    getAllTasks.run()
+  }, [query.page])
+  useEffect(() => {
+    if (getAllTasks.result) {
+      if (getAllTasks.result.length > 0) {
+        setTasks(getAllTasks.result)
+      } else {
+        patchPage(query.page - 1)
+        enqueueSnackbar("You are in last page!", { variant: "info" })
+      }
+    }
   }, [getAllTasks.result])
   const contextValue = {
     tasks,
@@ -53,6 +72,8 @@ export const TaskProvider: React.FC = (props) => {
     updateTask,
     removeTask,
     loading: getAllTasks.loading,
+    patchPage,
+    page: query.page,
     perLoad,
   }
   return (

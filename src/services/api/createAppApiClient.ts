@@ -72,19 +72,21 @@ const updateUser =
       return res.data.data
     } catch (error) {}
   }
-type AllTaskReponse = {
+type GetAllTaskReponse = {
   count: number
   data: Task[]
 }
-type AllTaskRequest = {
+type GetAllTaskRequest = {
   skip: number
   limit: number
 }
 const getAllTasks =
   (api: AxiosInstance) =>
-  async (params?: AllTaskRequest): Promise<Task[] | undefined> => {
+  async (req?: GetAllTaskRequest): Promise<Task[] | undefined> => {
     try {
-      const res = await api.get<AllTaskReponse>(`/task${params ? `?limit=${params.limit}&skip=${params.skip}` : ""}`)
+      const res = await api.get<GetAllTaskReponse>("/task", {
+        params: req,
+      })
 
       return res.data.data
     } catch (error) {}
