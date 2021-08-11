@@ -32,7 +32,7 @@ export const HomePage: React.FC = (props) => {
           }
           submitLabel="Add"
           onAction={taskCtx.addTask}
-          apiFuntion={api.addTask}
+          apiFuntion={api.addTask} 
         ></TaskForm>
       </Main>
     </MainLayout>
