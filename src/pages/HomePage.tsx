@@ -35,7 +35,7 @@ export const HomePage: React.FC = (props) => {
           apiFuntion={api.addTask}  
         ></TaskForm>
       </Main>
-    </MainLayout>
+    </MainLayout> 
   )
 }
 const CustomFloatBtn = styled(Fab)`
