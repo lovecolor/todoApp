@@ -12,25 +12,30 @@ import { Task } from "../services/api/types/Task"
 const TaskContext = createContext<{
   tasks: Task[]
   loading: boolean
-  addTask: (newTask: Task) => void
+  addTask: (...tasks: Task[]) => void
   updateTask: (task: Task) => void
   removeTask: (taskId: string) => void
+  perLoad: number
 }>({
   tasks: [],
-  addTask: (newTask: Task) => {},
+  addTask: (...tasks: Task[]) => {},
   updateTask: (task: Task) => {},
   loading: false,
   removeTask: (taskId: string) => {},
+  perLoad: 8,
 })
 export const TaskProvider: React.FC = (props) => {
   const { enqueueSnackbar } = useSnackbar()
   const [tasks, setTasks] = useState<Task[]>([])
   const api = useAppApiClient()
+  const perLoad = 8
 
-  const getAllTasks = useAsync(api.getAllTasks, true)
-  const addTask = (newTask: Task) => {
-    setTasks([...tasks, newTask])
+  const getAllTasks = useAsync(() => api.getAllTasks({ limit: perLoad, skip: 0 }), true)
+
+  const addTask = (...newTasks: Task[]) => {
+    setTasks(tasks.concat(newTasks))
   }
+
   const updateTask = (editedTask: Task) => {
     const updatedTasks = tasks.map((task) => (task._id === editedTask._id ? editedTask : task))
     setTasks(updatedTasks)
@@ -40,7 +45,7 @@ export const TaskProvider: React.FC = (props) => {
     setTasks(newTasks)
   }
   useEffect(() => {
-    if (getAllTasks.result) setTasks(getAllTasks.result)
+    if (getAllTasks.result) setTasks(tasks.concat(getAllTasks.result))
   }, [getAllTasks.result])
   const contextValue = {
     tasks,
@@ -48,6 +53,7 @@ export const TaskProvider: React.FC = (props) => {
     updateTask,
     removeTask,
     loading: getAllTasks.loading,
+    perLoad,
   }
   return (
     <TaskContext.Provider value={contextValue}>

@@ -76,13 +76,19 @@ type AllTaskReponse = {
   count: number
   data: Task[]
 }
-const getAllTasks = (api: AxiosInstance) => async (): Promise<Task[] | undefined> => {
-  try {
-    const res = await api.get<AllTaskReponse>("/task")
-
-    return res.data.data
-  } catch (error) {}
+type AllTaskRequest = {
+  skip: number
+  limit: number
 }
+const getAllTasks =
+  (api: AxiosInstance) =>
+  async (params?: AllTaskRequest): Promise<Task[] | undefined> => {
+    try {
+      const res = await api.get<AllTaskReponse>(`/task${params ? `?limit=${params.limit}&skip=${params.skip}` : ""}`)
+
+      return res.data.data
+    } catch (error) {}
+  }
 type AddTaskReponse = {
   success: boolean
   data: Task
