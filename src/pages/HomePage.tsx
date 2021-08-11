@@ -126,7 +126,7 @@ const AddTaskBtn = styled(FabPrimary)`
   right: calc(50% - 28px);
 `
 const Main = styled.div`
-  position: relative;
+  position: relative; 
   width: 100%;
 
   display: flex;
