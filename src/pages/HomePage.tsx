@@ -32,6 +32,7 @@ export const HomePage: React.FC = (props) => {
 
   const changePage = async (index) => {
     if (index <= 0) return
+    
     if (index > currentPage && taskCtx.tasks.length === +currentPage * taskCtx.perLoad) {
       setLoad(true)
       const result = await api.getAllTasks({
