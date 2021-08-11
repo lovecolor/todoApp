@@ -115,7 +115,7 @@ const NextBtn = styled(FabPrimary)`
   position: fixed;
   top: 50%;
   right: 1rem;
-  display: flex;
+  display: flex; 
   justify-content: center;
   align-items: center;
 `
