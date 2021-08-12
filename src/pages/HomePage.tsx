@@ -12,17 +12,15 @@ import useAsync from "../hooks/useAsync"
 import AddIcon from "@material-ui/icons/Add"
 import { TaskForm } from "../components/tasks/TaskForm"
 import { CircularProgress, Fab } from "@material-ui/core"
-import { FabPrimary } from "../components/buttons/FabPrimary"
+import { FabPrimary } from "../components/buttons/ButtonFloatPrimary"
 import { useHistory, useLocation } from "react-router"
 import { useSnackbar } from "notistack"
 import useQuery from "../hooks/useQuery"
-import { BtnChangPage } from "../components/buttons/BtnChangePage"
+import { ButtonChangPage } from "../components/buttons/ButtonChangePage"
 
 export const HomePage: React.FC = (props) => {
   const { enqueueSnackbar } = useSnackbar()
   const api = useAppApiClient()
-  // const history = useHistory()
-  // const location = useLocation()
   const perLoad = 8
 
   const { query, patchQuery } = useQuery<{ page: number }>({
@@ -41,22 +39,27 @@ export const HomePage: React.FC = (props) => {
       enqueueSnackbar("Something is wrong!", { variant: "error" })
     }
   }, true)
+
   const handleAddTask = (newTask: Task) => {
     if (tasks.length < perLoad) setTasks([...tasks, newTask])
   }
+
   const handleEditTask = (editedTask: Task) => {
     const updatedTasks = tasks.map((task) => (task._id === editedTask._id ? editedTask : task))
     setTasks(updatedTasks)
   }
+
   const handleRemoveTask = () => {
     getTasks.run()
   }
+
   const changePage = async (newPage) => {
     if (newPage <= 0) return
     patchQuery({
       page: newPage,
     })
   }
+
   useEffect(() => {
     getTasks.run()
   }, [query.page])
@@ -71,12 +74,12 @@ export const HomePage: React.FC = (props) => {
         )}
         {query.page > 1 && (
           <PrevBtn onClick={() => changePage(+query.page - 1)}>
-            <ChevronLeftIcon fontSize="large" />
+            <ChevronLeftIcon />
           </PrevBtn>
         )}
         {tasks.length === perLoad && (
           <NextBtn onClick={() => changePage(+query.page + 1)}>
-            <ChevronRightIcon fontSize="large" />
+            <ChevronRightIcon />
           </NextBtn>
         )}
 
@@ -102,11 +105,17 @@ const Spinner = styled.div`
   left: 50%;
   transform: translate(-50%, -50%);
 `
-const PrevBtn = styled(BtnChangPage)`
+const PrevBtn = styled(ButtonChangPage)`
   left: 1rem;
+  @media screen and (max-width: 767px) {
+    left: 0;
+  }
 `
-const NextBtn = styled(BtnChangPage)`
+const NextBtn = styled(ButtonChangPage)`
   right: 1rem;
+  @media screen and (max-width: 767px) {
+    right: 0;
+  }
 `
 const AddTaskBtn = styled(FabPrimary)`
   position: fixed;
