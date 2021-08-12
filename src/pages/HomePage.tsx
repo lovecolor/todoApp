@@ -12,21 +12,21 @@ import useAsync from "../hooks/useAsync"
 import AddIcon from "@material-ui/icons/Add"
 import { TaskForm } from "../components/tasks/TaskForm"
 import { CircularProgress, Fab } from "@material-ui/core"
-import { FabPrimary } from "../fab/FabPrimary"
+import { FabPrimary } from "../components/buttons/FabPrimary"
 import { useHistory, useLocation } from "react-router"
 import { useSnackbar } from "notistack"
 import useQuery from "../hooks/useQuery"
+import { BtnChangPage } from "../components/buttons/BtnChangePage"
 
 export const HomePage: React.FC = (props) => {
   const { enqueueSnackbar } = useSnackbar()
   const api = useAppApiClient()
-  const history = useHistory()
-  const location = useLocation()
+  // const history = useHistory()
+  // const location = useLocation()
   const perLoad = 8
-  const queryParams = new URLSearchParams(location.search)
-  const currentPage = queryParams.get("page") || 1
+
   const { query, patchQuery } = useQuery<{ page: number }>({
-    page: +currentPage,
+    page: 1,
   })
   const [tasks, setTasks] = useState<Task[]>([])
 
@@ -56,15 +56,11 @@ export const HomePage: React.FC = (props) => {
     patchQuery({
       page: newPage,
     })
-    history.push({
-      pathname: location.pathname,
-      search: `?page=${newPage}`,
-    })
   }
   useEffect(() => {
     getTasks.run()
   }, [query.page])
-  return ( 
+  return (
     <MainLayout>
       <NavBar></NavBar>
       <Main>
@@ -74,12 +70,12 @@ export const HomePage: React.FC = (props) => {
           </Spinner>
         )}
         {query.page > 1 && (
-          <PrevBtn onClick={() => changePage(query.page - 1)}>
+          <PrevBtn onClick={() => changePage(+query.page - 1)}>
             <ChevronLeftIcon fontSize="large" />
           </PrevBtn>
         )}
         {tasks.length === perLoad && (
-          <NextBtn onClick={() => changePage(query.page + 1)}>
+          <NextBtn onClick={() => changePage(+query.page + 1)}>
             <ChevronRightIcon fontSize="large" />
           </NextBtn>
         )}
@@ -106,21 +102,11 @@ const Spinner = styled.div`
   left: 50%;
   transform: translate(-50%, -50%);
 `
-const PrevBtn = styled(FabPrimary)`
-  position: fixed;
-  top: 50%;
+const PrevBtn = styled(BtnChangPage)`
   left: 1rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 `
-const NextBtn = styled(FabPrimary)`
-  position: fixed;
-  top: 50%;
+const NextBtn = styled(BtnChangPage)`
   right: 1rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 `
 const AddTaskBtn = styled(FabPrimary)`
   position: fixed;
