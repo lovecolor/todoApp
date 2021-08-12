@@ -83,7 +83,7 @@ export const HomePage: React.FC = (props) => {
           </NextBtn>
         )}
 
-        <TaskList handleEditTask={handleEditTask} handleRemoveTask={handleRemoveTask} list={tasks}></TaskList>
+        <TaskList onEditTask={handleEditTask} onRemoveTask={handleRemoveTask} list={tasks}></TaskList>
         <TaskForm
           btnOpen={
             <AddTaskBtn>

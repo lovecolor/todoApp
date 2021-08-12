@@ -6,14 +6,14 @@ import { TaskItem } from "./TaskItem"
 
 export type TaskListProps = {
   list: Task[]
-  handleEditTask: (editedTask: Task) => void
-  handleRemoveTask: () => void
+  onEditTask: (editedTask: Task) => void
+  onRemoveTask: () => void
 }
 export const TaskList = (props: TaskListProps) => {
   return (
     <Root>
       {props.list.map((task, id) => (
-        <TaskItem onEdit={props.handleEditTask} onRemove={props.handleRemoveTask} task={task} key={id}></TaskItem>
+        <TaskItem onEdit={props.onEditTask} onRemove={props.onRemoveTask} task={task} key={id}></TaskItem>
       ))}
     </Root>
   )
