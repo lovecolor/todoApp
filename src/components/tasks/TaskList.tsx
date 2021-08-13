@@ -1,26 +1,29 @@
 import React from "react"
 import { useContext } from "react"
 import styled from "styled-components"
-import TaskContext from "../../contexts/TaskProvider"
 import { Task } from "../../services/api/types/Task"
 import { TaskItem } from "./TaskItem"
 
 export type TaskListProps = {
   list: Task[]
+  onEditTask: (editedTask: Task) => void
+  onRemoveTask: () => void
 }
 export const TaskList = (props: TaskListProps) => {
   return (
     <Root>
       {props.list.map((task, id) => (
-        <TaskItem task={task} key={id} ></TaskItem>
+        <TaskItem onEdit={props.onEditTask} onRemove={props.onRemoveTask} task={task} key={id}></TaskItem>
       ))}
     </Root>
   )
 }
 const Root = styled.div`
-  width: 100%;
+  min-width: calc(250px + 2rem);
+  margin: auto;
+  width: 80%;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   padding: 1rem;
-  grid-gap: 36px;
+  grid-gap: 20px;
 `

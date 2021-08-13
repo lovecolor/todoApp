@@ -13,7 +13,7 @@ import useAsync from "../../hooks/useAsync"
 import { ButtonPrimary } from "../buttons/ButtonPrimary"
 import { useSnackbar } from "notistack"
 import Checkbox, { CheckboxProps } from "@material-ui/core/Checkbox"
-import TaskContext from "../../contexts/TaskProvider"
+
 
 export type TaskFormProps = {
   task?: Task
@@ -23,7 +23,7 @@ export type TaskFormProps = {
   btnOpen: ReactElement
 }
 export const TaskForm = (props: TaskFormProps) => {
-  const taskCtx = useContext(TaskContext)
+   
   const { enqueueSnackbar } = useSnackbar()
   const { submitLabel, apiFuntion, onAction, task } = props
   const submit = useAsync(async (data) => {

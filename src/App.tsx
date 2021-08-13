@@ -8,7 +8,6 @@ import { useContext } from "react"
 import AuthContext from "./contexts/AuthProvider"
 import Register from "./pages/Register"
 import UserProfile from "./pages/UserProfile"
-import { TaskProvider } from "./contexts/TaskProvider"
 import { Loading } from "./components/text/Loading"
 
 export const App = () => {
@@ -29,9 +28,7 @@ export const App = () => {
                 ) : (
                   <>
                     {!isLoggedIn && <Redirect to={links.login()}></Redirect>}
-                    <TaskProvider>
-                      <HomePage></HomePage>
-                    </TaskProvider>
+                    <HomePage></HomePage>
                   </>
                 )}
               </Route>

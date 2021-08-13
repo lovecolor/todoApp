@@ -1,6 +1,5 @@
 import React from "react"
 import Card from "@material-ui/core/Card"
-
 import { Button, CircularProgress } from "@material-ui/core"
 import DeleteIcon from "@material-ui/icons/Delete"
 import EditIcon from "@material-ui/icons/Edit"
@@ -10,18 +9,18 @@ import useAsync from "../../hooks/useAsync"
 import { useAppApiClient } from "../../hooks/useAppApiClient"
 import { useEffect } from "react"
 import { useContext } from "react"
-import TaskContext from "../../contexts/TaskProvider"
 import { ButtonPrimary } from "../buttons/ButtonPrimary"
 import { useSnackbar } from "notistack"
 import { TaskForm } from "./TaskForm"
 
 export type TaskItemProps = {
   task: Task
+  onEdit: (editedTask: Task) => void
+  onRemove: () => void
 }
 export const TaskItem = (props: TaskItemProps) => {
-  const { task } = props
+  const { task, onEdit, onRemove } = props
   const { enqueueSnackbar } = useSnackbar()
-  const taskCtx = useContext(TaskContext)
   const api = useAppApiClient()
 
   const changeStatus = useAsync(async () => {
@@ -33,12 +32,12 @@ export const TaskItem = (props: TaskItemProps) => {
       },
     })
 
-    if (result) taskCtx.updateTask(result)
+    if (result) onEdit(result)
   })
   const removeTask = useAsync(async () => {
     const result = await api.removeTask(task._id!)
     if (result) {
-      taskCtx.removeTask(task._id!)
+      onRemove()
       enqueueSnackbar("Delete success!", { variant: "success" })
     } else {
       enqueueSnackbar("Delete failure!", { variant: "error" })
@@ -59,7 +58,7 @@ export const TaskItem = (props: TaskItemProps) => {
           task={task}
           btnOpen={<ButtonPrimary startIcon={<EditIcon />}>Edit</ButtonPrimary>}
           submitLabel="Update"
-          onAction={taskCtx.updateTask}
+          onAction={onEdit}
           apiFuntion={api.updateTask}
         ></TaskForm>
         <CustomButton onClick={() => removeTask.run()} variant="contained" color="secondary" startIcon={<DeleteIcon />}>
