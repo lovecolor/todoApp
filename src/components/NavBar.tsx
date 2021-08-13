@@ -19,6 +19,7 @@ import useAsync from "../hooks/useAsync"
 import { useLinks } from "../hooks/useLinks"
 import { Dropdown } from "./Dropdown"
 import { Heading6 } from "./text/Heading6"
+import AvatarUser from "./AvatarUser"
 
 export const NavBar: React.FC = (props) => {
   const history = useHistory()
@@ -56,7 +57,7 @@ export const NavBar: React.FC = (props) => {
       <AppBar position="static">
         <Toolbar>
           <Grid container alignItems="center">
-            <IconButton edge="start" color="inherit" >
+            <IconButton edge="start" color="inherit">
               <MenuIcon />
             </IconButton>
             <Heading6>Todos</Heading6>
@@ -65,11 +66,8 @@ export const NavBar: React.FC = (props) => {
           <div>
             <Dropdown
               label={
-                <IconButton
-                  
-                  color="inherit"
-                >
-                  <AccountCircle />
+                <IconButton color="inherit">
+                  <AvatarUser width="30px" url={authCtx.urlImage}></AvatarUser>
                 </IconButton>
               }
               actions={MenuActions}

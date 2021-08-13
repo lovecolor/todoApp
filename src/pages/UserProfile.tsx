@@ -1,4 +1,4 @@
-import { Button, Paper, Typography } from "@material-ui/core"
+import { Button, CircularProgress, Paper, Typography } from "@material-ui/core"
 import React from "react"
 import styled from "styled-components"
 import { MainLayout } from "../layouts/MainLayout"
@@ -8,7 +8,8 @@ import { useContext } from "react"
 import AuthContext from "../contexts/AuthProvider"
 import { useState } from "react"
 import { ButtonPrimary } from "../components/buttons/ButtonPrimary"
-
+import IconButton from "@material-ui/core/IconButton"
+import PhotoCamera from "@material-ui/icons/PhotoCamera"
 import { useHistory } from "react-router"
 import { useLinks } from "../hooks/useLinks"
 import useAsync from "../hooks/useAsync"
@@ -18,6 +19,7 @@ import { Alert } from "@material-ui/lab"
 import { UpdateUserRequest } from "../services/api/types/UpdateUserRequest"
 import { Loading } from "../components/text/Loading"
 import { GridContainer } from "../components/Grid/GridContainer"
+import AvatarUser from "../components/AvatarUser"
 
 export default function UserProfile() {
   const { enqueueSnackbar } = useSnackbar()
@@ -68,6 +70,21 @@ export default function UserProfile() {
     setIsEdit(false)
   }
 
+  const uploadImage = useAsync(async (formData) => {
+    const result = await api.uploadImage(formData)
+    if (result) {
+      authCtx.setUrlImage(URL.createObjectURL(formData.get("avatar")))
+      enqueueSnackbar("Upload succes!", { variant: "success" })
+    } else {
+      enqueueSnackbar("Upload failure!", { variant: "error" })
+    }
+  })
+  const onChangeImage = (e) => {
+    
+    const data = new FormData()
+    data.append("avatar", e.target.files[0])
+    uploadImage.run(data)
+  }
   return (
     <MainLayout>
       <CustomButton onClick={backHandler} startIcon={<ArrowBackIosIcon />}>
@@ -75,6 +92,25 @@ export default function UserProfile() {
       </CustomButton>
       <CustomPaper>
         <GridContainer spacing={3}>
+          <Avatar>
+            {uploadImage.loading && (
+              <Spinner>
+                <CircularProgress></CircularProgress>
+              </Spinner>
+            )}
+            <AvatarUser width="17rem" url={authCtx.urlImage}></AvatarUser>
+            <OverlayUpLoadImage className="overlay">
+              {" "}
+              <InputUploadImage onChange={onChangeImage} id="icon-button-file" accept="image/*" type="file" />
+              <label htmlFor="icon-button-file">
+                {" "}
+                <IconButton component="span">
+                  <PhotoCamera fontSize="large" />
+                </IconButton>
+              </label>
+            </OverlayUpLoadImage>
+          </Avatar>
+
           <Typography align="center" variant="h4">
             Your Profile
           </Typography>
@@ -138,7 +174,7 @@ const CustomSpan = styled.span`
   font-size: 1.3rem;
   text-align: center;
 `
- 
+
 const CustomButton = styled(ButtonPrimary)`
   margin: 1rem;
 `
@@ -150,4 +186,47 @@ const CustomPaper = styled(Paper)`
   margin: auto;
   margin-top: 3rem;
   max-width: 50rem;
+`
+const Avatar = styled.div`
+  margin: auto;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  &:hover {
+    .overlay {
+      display: flex;
+    }
+  }
+`
+const OverlayUpLoadImage = styled.div`
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  border-radius: 50rem;
+  background-color: rgba(0, 0, 0, 0.1);
+
+  justify-content: center;
+  align-items: center;
+  animation: show 1s ease;
+  @keyframes show {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+`
+const InputUploadImage = styled.input`
+  display: none;
+`
+const Spinner = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 `
