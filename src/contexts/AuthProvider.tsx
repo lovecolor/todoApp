@@ -7,27 +7,27 @@ import { User } from "../services/api/types/User"
 
 const AuthContext = createContext<{
   user: User | null
-  urlImage: string | null
+  avatarUrl: string | undefined
   setUser: (user: User | null) => void
-  setUrlImage: (url: string | null) => void
+  setAvatarUrl: (url: string | undefined) => void
 }>({
   user: null,
-  urlImage: null,
+  avatarUrl: undefined,
   setUser: (user: User | null) => {},
-  setUrlImage: (url: string | null) => {},
+  setAvatarUrl: (url: string | undefined) => {},
 })
 
 export const AuthProvider: React.FC = (props) => {
   const [user, setUser] = useState<User | null>(null)
-  const [urlImage, setUrlImage] = useState<string | null>(null)
+  const [avatarUrl, setAvatarUrl] = useState<string | undefined>(undefined)
   const api = useAppApiClient()
 
   const currentUser = useAsync(async () => {
     const result = await api.getCurrentUser()
     if (result) {
       setUser(result)
-      const resultGetImage = await api.getUserImage({ uid: result._id })
-      if (resultGetImage) setUrlImage(resultGetImage)
+      const userAvatarUrl = await api.getUserImage({ userId: result._id })
+      if (userAvatarUrl) setAvatarUrl(userAvatarUrl)
     } else {
       localStorage.removeItem("token")
     }
@@ -36,8 +36,8 @@ export const AuthProvider: React.FC = (props) => {
   const contextValue = {
     user,
     setUser,
-    urlImage,
-    setUrlImage,
+    avatarUrl,
+    setAvatarUrl,
   }
   useEffect(() => {
     const token = localStorage.getItem("token")

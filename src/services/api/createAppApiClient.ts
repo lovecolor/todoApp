@@ -87,18 +87,21 @@ const uploadImage =
       return res.data
     } catch (error) {}
   }
+  
 type GetUserImageRequest = {
-  uid: string
+  userId: string
 }
 
 const getUserImage =
   (api: AxiosInstance) =>
   async (req: GetUserImageRequest): Promise<string | undefined> => {
     try {
-      const res = await api.get<string>(`/user/${req.uid}/avatar`)
+      const res = await api.get<string>(`/user/${req.userId}/avatar`)
 
       return res.request.responseURL
-    } catch (error) {}
+    } catch (error) {
+
+    }
   }
 type GetAllTaskReponse = {
   count: number

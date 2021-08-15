@@ -32,8 +32,8 @@ export const Login = () => {
     if (result) {
       authCtx.setUser(result.user)
       localStorage.setItem("token", result.token)
-      const imageUser = await api.getUserImage({ uid: result.user._id })
-      if (imageUser) authCtx.setUrlImage(imageUser)
+      const userAvatarUrl = await api.getUserImage({ userId: result.user._id })
+      if (userAvatarUrl) authCtx.setAvatarUrl(userAvatarUrl)
       history.push(links.home())
     } else {
       setError("Email or password is wrong!")

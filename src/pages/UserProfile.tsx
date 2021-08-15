@@ -19,7 +19,7 @@ import { Alert } from "@material-ui/lab"
 import { UpdateUserRequest } from "../services/api/types/UpdateUserRequest"
 import { Loading } from "../components/text/Loading"
 import { GridContainer } from "../components/Grid/GridContainer"
-import AvatarUser from "../components/AvatarUser"
+import { UserAvatar } from "../components/UserAvatar"
 
 export default function UserProfile() {
   const { enqueueSnackbar } = useSnackbar()
@@ -47,6 +47,7 @@ export default function UserProfile() {
     email: user!.email,
     age: user!.age,
   })
+
   const changeFormHandler = (e) => {
     const { name, value } = e.target
     setFormValue({
@@ -54,18 +55,22 @@ export default function UserProfile() {
       [name]: value,
     })
   }
+
   const editHandler = () => {
     setIsEdit(true)
   }
+
   const saveHandler = () => {
     run({
       ...formValue,
       age: +formValue.age,
     })
   }
+
   const backHandler = () => {
     history.push(links.home())
   }
+
   const cancelEditHandler = () => {
     setIsEdit(false)
   }
@@ -73,18 +78,19 @@ export default function UserProfile() {
   const uploadImage = useAsync(async (formData) => {
     const result = await api.uploadImage(formData)
     if (result) {
-      authCtx.setUrlImage(URL.createObjectURL(formData.get("avatar")))
+      authCtx.setAvatarUrl(URL.createObjectURL(formData.get("avatar")))
       enqueueSnackbar("Upload succes!", { variant: "success" })
     } else {
       enqueueSnackbar("Upload failure!", { variant: "error" })
     }
   })
-  const onChangeImage = (e) => {
-    
+
+  const handleChangeImage = (e) => {
     const data = new FormData()
     data.append("avatar", e.target.files[0])
     uploadImage.run(data)
   }
+
   return (
     <MainLayout>
       <CustomButton onClick={backHandler} startIcon={<ArrowBackIosIcon />}>
@@ -98,10 +104,10 @@ export default function UserProfile() {
                 <CircularProgress></CircularProgress>
               </Spinner>
             )}
-            <AvatarUser width="17rem" url={authCtx.urlImage}></AvatarUser>
+            <CustomAvatar src={authCtx.avatarUrl}></CustomAvatar>
             <OverlayUpLoadImage className="overlay">
               {" "}
-              <InputUploadImage onChange={onChangeImage} id="icon-button-file" accept="image/*" type="file" />
+              <InputUploadImage onChange={handleChangeImage} id="icon-button-file" accept="image/*" type="file" />
               <label htmlFor="icon-button-file">
                 {" "}
                 <IconButton component="span">
@@ -187,7 +193,13 @@ const CustomPaper = styled(Paper)`
   margin-top: 3rem;
   max-width: 50rem;
 `
+const CustomAvatar = styled(UserAvatar)`
+  width: 15rem;
+  height: 15rem;
+`
 const Avatar = styled.div`
+  border-radius: 50%;
+  overflow: hidden;
   margin: auto;
   position: relative;
   display: flex;
@@ -206,9 +218,7 @@ const OverlayUpLoadImage = styled.div`
   left: 0;
   bottom: 0;
   right: 0;
-  border-radius: 50rem;
-  background-color: rgba(0, 0, 0, 0.1);
-
+  background-color: rgba(0, 0, 0, 0.3);
   justify-content: center;
   align-items: center;
   animation: show 1s ease;
