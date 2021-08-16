@@ -105,15 +105,13 @@ export default function UserProfile() {
               </Spinner>
             )}
             <CustomAvatar src={authCtx.avatarUrl}></CustomAvatar>
-            <OverlayUpLoadImage className="overlay">
-              {" "}
-              <InputUploadImage onChange={handleChangeImage} id="icon-button-file" accept="image/*" type="file" />
-              <label htmlFor="icon-button-file">
-                {" "}
-                <IconButton component="span">
+            <OverlayUpLoadImage>
+              <Choosefile>
+                <InputUploadImage onChange={handleChangeImage} accept="image/*" type="file" />
+                <IcBtnCamera>
                   <PhotoCamera fontSize="large" />
-                </IconButton>
-              </label>
+                </IcBtnCamera>
+              </Choosefile>{" "}
             </OverlayUpLoadImage>
           </Avatar>
 
@@ -187,6 +185,19 @@ const CustomButton = styled(ButtonPrimary)`
 const Actions = styled.div`
   text-align: center;
 `
+const IcBtnCamera = styled(IconButton)`
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+`
+const Choosefile = styled.div`
+  position: relative;
+  width: 60px;
+  height: 60px;
+  overflow: hidden;
+  border-radius: 50%;
+`
 const CustomPaper = styled(Paper)`
   padding: 3rem;
   margin: auto;
@@ -206,7 +217,7 @@ const Avatar = styled.div`
   justify-content: center;
   align-items: center;
   &:hover {
-    .overlay {
+    div {
       display: flex;
     }
   }
@@ -216,8 +227,8 @@ const OverlayUpLoadImage = styled.div`
   position: absolute;
   top: 0;
   left: 0;
-  bottom: 0;
-  right: 0;
+  width: 100%;
+  height: 100%;
   background-color: rgba(0, 0, 0, 0.3);
   justify-content: center;
   align-items: center;
@@ -232,7 +243,8 @@ const OverlayUpLoadImage = styled.div`
   }
 `
 const InputUploadImage = styled.input`
-  display: none;
+  cursor: pointer;
+  opacity: 0;
 `
 const Spinner = styled.div`
   position: absolute;
