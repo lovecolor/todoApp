@@ -98,22 +98,22 @@ export default function UserProfile() {
       </CustomButton>
       <CustomPaper>
         <GridContainer spacing={3}>
-          <Avatar>
+          <AvatarBox>
             {uploadImage.loading && (
               <Spinner>
                 <CircularProgress></CircularProgress>
               </Spinner>
             )}
             <CustomAvatar src={authCtx.avatarUrl}></CustomAvatar>
-            <OverlayUpLoadImage>
-              <Choosefile>
-                <InputUploadImage onChange={handleChangeImage} accept="image/*" type="file" />
-                <IcBtnCamera>
+            <UpLoadImageOverlay>
+              <ButtonChoosefile>
+                <IconButton>
                   <PhotoCamera fontSize="large" />
-                </IcBtnCamera>
-              </Choosefile>{" "}
-            </OverlayUpLoadImage>
-          </Avatar>
+                </IconButton>
+                <InputUploadImage onChange={handleChangeImage} accept="image/*" type="file" />
+              </ButtonChoosefile>
+            </UpLoadImageOverlay>
+          </AvatarBox>
 
           <Typography align="center" variant="h4">
             Your Profile
@@ -185,18 +185,16 @@ const CustomButton = styled(ButtonPrimary)`
 const Actions = styled.div`
   text-align: center;
 `
-const IcBtnCamera = styled(IconButton)`
-  pointer-events: none;
-  position: absolute;
-  top: 0;
-  left: 0;
-`
-const Choosefile = styled.div`
+
+const ButtonChoosefile = styled.div`
   position: relative;
   width: 60px;
   height: 60px;
   overflow: hidden;
   border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `
 const CustomPaper = styled(Paper)`
   padding: 3rem;
@@ -208,25 +206,10 @@ const CustomAvatar = styled(UserAvatar)`
   width: 15rem;
   height: 15rem;
 `
-const Avatar = styled.div`
-  border-radius: 50%;
-  overflow: hidden;
-  margin: auto;
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  &:hover {
-    div {
-      display: flex;
-    }
-  }
-`
-const OverlayUpLoadImage = styled.div`
+
+const UpLoadImageOverlay = styled.div`
   display: none;
   position: absolute;
-  top: 0;
-  left: 0;
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.3);
@@ -242,8 +225,28 @@ const OverlayUpLoadImage = styled.div`
     }
   }
 `
+const AvatarBox = styled.div`
+  border-radius: 50%;
+  overflow: hidden;
+  margin: auto;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  &:hover {
+    ${UpLoadImageOverlay} {
+      display: flex;
+    }
+  }
+`
+
 const InputUploadImage = styled.input`
   cursor: pointer;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   opacity: 0;
 `
 const Spinner = styled.div`
