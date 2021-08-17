@@ -1,5 +1,5 @@
 import { Button, CircularProgress, Paper, Typography } from "@material-ui/core"
-import React from "react"
+import React, { useRef } from "react"
 import styled from "styled-components"
 import { MainLayout } from "../layouts/MainLayout"
 import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos"
@@ -29,6 +29,12 @@ export default function UserProfile() {
   const links = useLinks().common
   const authCtx = useContext(AuthContext)
   const { user } = authCtx
+
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const handleChooseFile = () => {
+    fileInputRef.current?.click()
+  }
 
   const { run, loading } = useAsync(async (data: UpdateUserRequest) => {
     const result = await api.updateUser(data)
@@ -106,12 +112,10 @@ export default function UserProfile() {
             )}
             <CustomAvatar src={authCtx.avatarUrl}></CustomAvatar>
             <UpLoadImageOverlay>
-              <ButtonChoosefile>
-                <IconButton>
-                  <PhotoCamera fontSize="large" />
-                </IconButton>
-                <InputUploadImage onChange={handleChangeImage} accept="image/*" type="file" />
-              </ButtonChoosefile>
+              <IconButton onClick={handleChooseFile}>
+                <PhotoCamera fontSize="large" />
+              </IconButton>
+              <InputUploadImage ref={fileInputRef} onChange={handleChangeImage} accept="image/*" type="file" />
             </UpLoadImageOverlay>
           </AvatarBox>
 
@@ -185,17 +189,6 @@ const CustomButton = styled(ButtonPrimary)`
 const Actions = styled.div`
   text-align: center;
 `
-
-const ButtonChoosefile = styled.div`
-  position: relative;
-  width: 60px;
-  height: 60px;
-  overflow: hidden;
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`
 const CustomPaper = styled(Paper)`
   padding: 3rem;
   margin: auto;
@@ -241,13 +234,7 @@ const AvatarBox = styled.div`
 `
 
 const InputUploadImage = styled.input`
-  cursor: pointer;
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  opacity: 0;
+  display: none;
 `
 const Spinner = styled.div`
   position: absolute;
