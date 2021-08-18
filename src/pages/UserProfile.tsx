@@ -1,5 +1,5 @@
-import { Button, Paper, Typography } from "@material-ui/core"
-import React from "react"
+import { Button, CircularProgress, Paper, Typography } from "@material-ui/core"
+import React, { useRef } from "react"
 import styled from "styled-components"
 import { MainLayout } from "../layouts/MainLayout"
 import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos"
@@ -8,7 +8,8 @@ import { useContext } from "react"
 import AuthContext from "../contexts/AuthProvider"
 import { useState } from "react"
 import { ButtonPrimary } from "../components/buttons/ButtonPrimary"
-
+import IconButton from "@material-ui/core/IconButton"
+import PhotoCamera from "@material-ui/icons/PhotoCamera"
 import { useHistory } from "react-router"
 import { useLinks } from "../hooks/useLinks"
 import useAsync from "../hooks/useAsync"
@@ -18,6 +19,7 @@ import { Alert } from "@material-ui/lab"
 import { UpdateUserRequest } from "../services/api/types/UpdateUserRequest"
 import { Loading } from "../components/text/Loading"
 import { GridContainer } from "../components/Grid/GridContainer"
+import { UserAvatar } from "../components/UserAvatar"
 
 export default function UserProfile() {
   const { enqueueSnackbar } = useSnackbar()
@@ -27,6 +29,12 @@ export default function UserProfile() {
   const links = useLinks().common
   const authCtx = useContext(AuthContext)
   const { user } = authCtx
+
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const handleChooseFile = () => {
+    fileInputRef.current?.click()
+  }
 
   const { run, loading } = useAsync(async (data: UpdateUserRequest) => {
     const result = await api.updateUser(data)
@@ -45,6 +53,7 @@ export default function UserProfile() {
     email: user!.email,
     age: user!.age,
   })
+
   const changeFormHandler = (e) => {
     const { name, value } = e.target
     setFormValue({
@@ -52,20 +61,40 @@ export default function UserProfile() {
       [name]: value,
     })
   }
+
   const editHandler = () => {
     setIsEdit(true)
   }
+
   const saveHandler = () => {
     run({
       ...formValue,
       age: +formValue.age,
     })
   }
+
   const backHandler = () => {
     history.push(links.home())
   }
+
   const cancelEditHandler = () => {
     setIsEdit(false)
+  }
+
+  const uploadImage = useAsync(async (formData) => {
+    const result = await api.uploadImage(formData)
+    if (result) {
+      authCtx.setAvatarUrl(URL.createObjectURL(formData.get("avatar")))
+      enqueueSnackbar("Upload succes!", { variant: "success" })
+    } else {
+      enqueueSnackbar("Upload failure!", { variant: "error" })
+    }
+  })
+
+  const handleChangeImage = (e) => {
+    const data = new FormData()
+    data.append("avatar", e.target.files[0])
+    uploadImage.run(data)
   }
 
   return (
@@ -75,6 +104,21 @@ export default function UserProfile() {
       </CustomButton>
       <CustomPaper>
         <GridContainer spacing={3}>
+          <AvatarBox>
+            {uploadImage.loading && (
+              <Spinner>
+                <CircularProgress></CircularProgress>
+              </Spinner>
+            )}
+            <CustomAvatar src={authCtx.avatarUrl}></CustomAvatar>
+            <UpLoadImageOverlay>
+              <IconButton onClick={handleChooseFile}>
+                <PhotoCamera fontSize="large" />
+              </IconButton>
+              <InputUploadImage ref={fileInputRef} onChange={handleChangeImage} accept="image/*" type="file" />
+            </UpLoadImageOverlay>
+          </AvatarBox>
+
           <Typography align="center" variant="h4">
             Your Profile
           </Typography>
@@ -138,7 +182,7 @@ const CustomSpan = styled.span`
   font-size: 1.3rem;
   text-align: center;
 `
- 
+
 const CustomButton = styled(ButtonPrimary)`
   margin: 1rem;
 `
@@ -150,4 +194,51 @@ const CustomPaper = styled(Paper)`
   margin: auto;
   margin-top: 3rem;
   max-width: 50rem;
+`
+const CustomAvatar = styled(UserAvatar)`
+  width: 15rem;
+  height: 15rem;
+`
+
+const UpLoadImageOverlay = styled.div`
+  display: none;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.3);
+  justify-content: center;
+  align-items: center;
+  animation: show 1s ease;
+  @keyframes show {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+`
+const AvatarBox = styled.div`
+  border-radius: 50%;
+  overflow: hidden;
+  margin: auto;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  &:hover {
+    ${UpLoadImageOverlay} {
+      display: flex;
+    }
+  }
+`
+
+const InputUploadImage = styled.input`
+  display: none;
+`
+const Spinner = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 `

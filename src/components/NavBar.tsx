@@ -19,13 +19,14 @@ import useAsync from "../hooks/useAsync"
 import { useLinks } from "../hooks/useLinks"
 import { Dropdown } from "./Dropdown"
 import { Heading6 } from "./text/Heading6"
+import { UserAvatar } from "./UserAvatar"
 
 export const NavBar: React.FC = (props) => {
   const history = useHistory()
   const api = useAppApiClient()
   const links = useLinks().common
-
   const authCtx = useContext(AuthContext)
+
   const handleLogout = useAsync(async () => {
     const result = await api.logout()
     if (result) {
@@ -38,9 +39,11 @@ export const NavBar: React.FC = (props) => {
   const logoutHandler = () => {
     handleLogout.run()
   }
+
   const profileHandler = () => {
     history.push("/profile")
   }
+
   const MenuActions = [
     {
       name: "Profile",
@@ -51,12 +54,13 @@ export const NavBar: React.FC = (props) => {
       handle: logoutHandler,
     },
   ]
+
   return (
     <div>
       <AppBar position="static">
         <Toolbar>
           <Grid container alignItems="center">
-            <IconButton edge="start" color="inherit" >
+            <IconButton edge="start" color="inherit">
               <MenuIcon />
             </IconButton>
             <Heading6>Todos</Heading6>
@@ -65,11 +69,8 @@ export const NavBar: React.FC = (props) => {
           <div>
             <Dropdown
               label={
-                <IconButton
-                  
-                  color="inherit"
-                >
-                  <AccountCircle />
+                <IconButton color="inherit">
+                  <UserAvatar src={authCtx.avatarUrl}></UserAvatar>
                 </IconButton>
               }
               actions={MenuActions}

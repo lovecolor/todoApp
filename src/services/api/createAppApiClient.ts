@@ -17,6 +17,8 @@ export const createAppApiClient = (api: AxiosInstance) => {
     addTask: addTask(api),
     updateTask: updateTask(api),
     removeTask: removeTask(api),
+    uploadImage: uploadImage(api),
+    getUserImage: getUserImage(api),
   }
 }
 
@@ -71,6 +73,35 @@ const updateUser =
 
       return res.data.data
     } catch (error) {}
+  }
+
+type UploadImageResponse = {
+  status: boolean
+}
+const uploadImage =
+  (api: AxiosInstance) =>
+  async (req: FormData): Promise<UploadImageResponse | undefined> => {
+    try {
+      const res = await api.post<UploadImageResponse>("/user/me/avatar", req)
+
+      return res.data
+    } catch (error) {}
+  }
+  
+type GetUserImageRequest = {
+  userId: string
+}
+
+const getUserImage =
+  (api: AxiosInstance) =>
+  async (req: GetUserImageRequest): Promise<string | undefined> => {
+    try {
+      const res = await api.get<string>(`/user/${req.userId}/avatar`)
+
+      return res.request.responseURL
+    } catch (error) {
+
+    }
   }
 type GetAllTaskReponse = {
   count: number
